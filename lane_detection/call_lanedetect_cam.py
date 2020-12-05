@@ -15,7 +15,7 @@ import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 import lanedetect_parametertuning
 
-for i in range(10):
+for i in range(1):
     # get image from cam
     return_value, image = camera.read()
 
@@ -23,8 +23,11 @@ for i in range(10):
     width = 640
     height = 480
     dim = (width, height)
-    image = cv2.resize(image, dim, interpolation = cv2.INTER_AREA)
- 
+    image = cv2.resize(image, dim)
+
+    # change image df values from uint8 to float32
+    image = image.astype(float)
+
     # plot input image
     fig = plt.figure(figsize=(20, 10))
     ax = fig.add_subplot(1, 2, 1,xticks=[], yticks=[])

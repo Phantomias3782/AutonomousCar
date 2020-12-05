@@ -14,9 +14,9 @@ def grayscale(img):
     but NOTE: to see the returned image as grayscale
     (assuming your grayscaled image is called 'gray')
     you should call plt.imshow(gray, cmap='gray')"""
-    return cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
+    #return cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
     # Or use BGR2GRAY if you read an image with cv2.imread()
-    #return cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    return cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     
 
 def canny(img, low_threshold, high_threshold):
@@ -183,6 +183,6 @@ def lane_finding_pipeline(image):
     #Hough Transform Lines
     houghed_lines = hough_lines(img = masked_img, rho = 1, theta = np.pi/180, threshold = 20, min_line_len = 20, max_line_gap = 180)
     #Draw lines on edges
-    output = weighted_img(img = houghed_lines, initial_img = image, α=1., β=1., γ=0.)
+    output = weighted_img(img = houghed_lines, initial_img = image, α=0.8, β=1., γ=0.)
     
     return 
