@@ -17,7 +17,6 @@ def grayscale(img):
     #return cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
     # Or use BGR2GRAY if you read an image with cv2.imread()
     return cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    
 
 def canny(img, low_threshold, high_threshold):
     """Applies the Canny transform"""

@@ -14,9 +14,9 @@ def grayscale(img):
     but NOTE: to see the returned image as grayscale
     (assuming your grayscaled image is called 'gray')
     you should call plt.imshow(gray, cmap='gray')"""
-    return cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
+    #return cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
     # Or use BGR2GRAY if you read an image with cv2.imread()
-    # return cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    return cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     
 def canny(img, low_threshold, high_threshold):
     """Applies the Canny transform"""
@@ -153,10 +153,16 @@ def weighted_img(img, initial_img, α=0.1, β=1., γ=0.):
 
 def get_vertices(image):
     rows, cols = image.shape[:2]
-    bottom_left  = [cols*0.15, rows]
-    top_left     = [cols*0.45, rows*0.6]
+    bottom_left  = [cols*0.05, rows]
+    top_left     = [cols*0.3, rows*0.2]
     bottom_right = [cols*0.95, rows]
-    top_right    = [cols*0.55, rows*0.6] 
+    top_right    = [cols*0.7, rows*0.2] 
+
+    # rows, cols = image.shape[:2]
+    # bottom_left  = [cols*0.15, rows]
+    # top_left     = [cols*0.45, rows*0.6]
+    # bottom_right = [cols*0.95, rows]
+    # top_right    = [cols*0.55, rows*0.6] 
     
     ver = np.array([[bottom_left, top_left, top_right, bottom_right]], dtype=np.int32)
     return ver
@@ -174,9 +180,9 @@ def lane_finding_pipeline(image):
     #Grayscale
     gray_img = grayscale(image)
     #Gaussian Smoothing
-    smoothed_img = gaussian_blur(img = gray_img, kernel_size = 5)
+    smoothed_img = gaussian_blur(img = gray_img, kernel_size = 3)
     #Canny Edge Detection
-    canny_img = canny(img = smoothed_img, low_threshold = 180, high_threshold = 240)
+    canny_img = canny(img = smoothed_img, low_threshold = 100, high_threshold = 150)
     #Masked Image Within a Polygon
     masked_img = region_of_interest(img = canny_img, vertices = get_vertices(image))
     #Hough Transform Lines
