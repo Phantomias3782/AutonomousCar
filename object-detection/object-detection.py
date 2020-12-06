@@ -210,7 +210,8 @@ def detect_image(image_path, tiny=True):
 
     ax2 = fig.add_subplot(1,2,1, xticks = [], yticks = [])
 
-    # Load and show original image
+	# Load and show original image
+    image_path=os.path.abspath(os.getcwd())+image_path[1:]
     img_original = mping.imread(image_path)
     ax2.imshow(img_original)
     ax2.set_title("Original")
