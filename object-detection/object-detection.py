@@ -42,7 +42,7 @@ def load_yolo(tiny = True):
     output_layers = [layer_names[i[0] - 1] for i in net.getUnconnectedOutLayers()]
 
     # print status
-    print("...loaded volov3 sucessfully")
+    print("...loaded yolov3 sucessfully")
 
     # return
     return output_layers, net
@@ -94,7 +94,7 @@ def check_reaction(label):
     if label in check_list:
 
         # reaction
-        print("Attention!")
+        print("Potential action required!")
 
         return True
 
@@ -211,7 +211,7 @@ def detect_image(image_path, tiny=True):
 
     ax2 = fig.add_subplot(1,2,1, xticks = [], yticks = [])
 
-	# Load and show original image
+	# load and show original image
     image_path=os.path.abspath(os.getcwd())+image_path[1:]
     img_original = mping.imread(image_path)
     ax2.imshow(img_original)
@@ -223,10 +223,13 @@ def detect_image(image_path, tiny=True):
     # preprocess image
     blob = cv2.dnn.blobFromImage(img_original, 1 / 255.0, (416, 416), swapRB=True, crop=False)
 
-    # detect objects
+    # load network
     output_layers, net = load_yolo(tiny=tiny)
+
+    # load coco list
     class_list = load_coco_names()
 
+    # detect objects
     net.setInput(blob)
     outs = net.forward(output_layers)
 
@@ -240,7 +243,6 @@ def detect_image(image_path, tiny=True):
     ax = fig.add_subplot(1,2,2, xticks = [], yticks = [])
     ax.set_title("Detected")
     ax.imshow(img)
-    
     plt.show()
 
 def detect_webcam(tiny=True):
@@ -248,7 +250,10 @@ def detect_webcam(tiny=True):
     # get camera feed
     video_capture = cv2.VideoCapture(0)
 
+    # load network
     output_layers, net = load_yolo(tiny=tiny)
+
+    # load coco list
     class_list = load_coco_names()
 
     while True:
@@ -261,7 +266,7 @@ def detect_webcam(tiny=True):
         # preprocess frame
         blob = cv2.dnn.blobFromImage(frame, 1 / 255.0, (320, 320), swapRB=True, crop=False)
         
-        #Detecting objects
+        # detect objects
         net.setInput(blob)
         outs = net.forward(output_layers)
 
