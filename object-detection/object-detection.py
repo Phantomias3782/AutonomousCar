@@ -78,7 +78,7 @@ def information_cal(outs, height, width):
                 confidences.append(float(confidence))
                 class_ids.append(class_id)
     
-    return w, h, x, y, boxes, confidences, class_ids
+    return boxes, confidences, class_ids
 
 def check_reaction(label):
     "if label in speified list send signal"
@@ -225,7 +225,7 @@ def detect_image(image_path, tiny=True):
     outs = net.forward(output_layers)
 
     # calculate boxes and classifications
-    w, h, x, y, boxes, confidences, class_ids = information_cal(outs, height, width)
+    boxes, confidences, class_ids = information_cal(outs, height, width)
 
     # draw boxes and classification
     img = information_draw(boxes, confidences, class_ids, class_list, img_original)
@@ -282,7 +282,7 @@ directory = "./test-images/"
 
 # calibrate(directory+"marker.jpg", 16, 50)
 
-detect_image(directory+"neuhauser-strasse-detail.jpg", tiny = False)
+detect_image(directory+"neuhauser-strasse-detail.jpg", tiny = True)
 
 # for image_path in list(os.listdir(directory)):
 
