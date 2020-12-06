@@ -1,11 +1,10 @@
-
 from flask import Flask, render_template, Response, request
 from camera import VideoCamera
 import time
 import threading
 import os
 
-pi_camera = VideoCamera(flip=True) # flip pi camera if upside down.
+pi_camera = VideoCamera(flip=False) # flip pi camera if upside down.
 
 # App Globals (do not edit)
 app = Flask(__name__)
@@ -18,6 +17,7 @@ def gen(camera):
     #get camera frame
     while True:
         frame = camera.get_frame()
+        frame=frame.tobytes()
         yield (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
 

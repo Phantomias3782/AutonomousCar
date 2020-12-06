@@ -160,7 +160,7 @@ def calibrate(image, marker_width, marker_distance):
     distance = round((marker_width * focalLength) / marker[1][0], 2)
     print("marker distance ckeck", distance)
 
-def information_draw(boxes, confidences, class_ids, class_list, img):
+def information_draw(boxes, confidences, class_ids,colors, class_list, img):
 
     # set Non-maximum Suppression and normal threshold
     threshold = 0.5
@@ -168,9 +168,7 @@ def information_draw(boxes, confidences, class_ids, class_list, img):
 
     indexes = cv2.dnn.NMSBoxes(boxes, confidences, threshold, nms_threshold)
 
-    # generate color palette
-    colors = np.random.uniform(0, 255, size=(len(class_list), 3))
-
+    
     # set font and other settings
     font = cv2.FONT_HERSHEY_PLAIN
     rec_width = 3
@@ -208,6 +206,8 @@ def information_draw(boxes, confidences, class_ids, class_list, img):
     return img
 
 def detect_image(image_path, tiny=True):
+    # generate color palette
+    colors = np.random.uniform(0, 255, size=(len(class_list), 3))
 
     # set figure
     fig = plt.figure(figsize=(20, 10))
@@ -240,18 +240,21 @@ def detect_image(image_path, tiny=True):
     boxes, confidences, class_ids = information_cal(outs, height, width)
 
     # draw boxes and classification
-    img = information_draw(boxes, confidences, class_ids, class_list, img_original)
+    img = information_draw(boxes, confidences, class_ids,colors, class_list, img_original)
 
     # show edited image
     ax = fig.add_subplot(1,2,2, xticks = [], yticks = [])
     ax.set_title("Detected")
     ax.imshow(img)
     plt.show()
-
-def detect_webcam(tiny=True):
     
+from imutils.video.pivideostream import PiVideoStream
+def detect_webcam(tiny=True):
+    # generate color palette
+    colors = np.random.uniform(0, 255, size=(len(class_list), 3))
+
     # get camera feed
-    video_capture = cv2.VideoCapture(0)
+    video_capture = PiVideoStream().start()
 
     # load network
     output_layers, net = load_yolo(tiny=tiny)
@@ -262,8 +265,9 @@ def detect_webcam(tiny=True):
     while True:
 
         # get frame
-        re, frame = video_capture.read()
-
+        time.sleep(2)
+        frame = video_capture.read()
+        
         height, width, channels = frame.shape
 
         # preprocess frame
@@ -277,18 +281,30 @@ def detect_webcam(tiny=True):
         boxes, confidences, class_ids = information_cal(outs, height, width)
 
         # draw boxes and classification
-        frame = information_draw(boxes, confidences, class_ids, class_list, frame)
+        frame = information_draw(boxes, confidences, class_ids, colors, class_list, frame)
 
         # show feed
-        cv2.imshow("Image",frame)
+#        cv2.imshow("Image",frame)
+        img = information_draw(boxes, confidences, class_ids, class_list, frame)
 
+        # show edited image
+             
+        fig = plt.figure(figsize=(20, 10))
+
+        #ax2 = fig.add_subplot(1,2,1, xticks = [], yticks = [])
+        ax = fig.add_subplot(1,2,2, xticks = [], yticks = [])
+        ax.set_title("Detected")
+        ax.imshow(img)
+        plt.show()
+        
+        break
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
             
     video_capture.release()
 
 ###############################################
-os.chdir("/Users/andreasmac/Documents/Github/AutonomousCar/object-detection")
+#os.chdir("/Users/andreasmac/Documents/Github/AutonomousCar/object-detection")
 
 # directory = "../lane_detection/google_img/"
 directory = "./test-images/"

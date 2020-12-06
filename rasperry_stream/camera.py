@@ -8,6 +8,8 @@ import imutils
 import time
 import numpy as np
 from call_lanedetect_cam import detect
+from object_detection import detect_webcam
+
 
 class VideoCamera(object):
     def __init__(self, flip = False):
@@ -25,9 +27,11 @@ class VideoCamera(object):
 
     def get_frame(self):
         frame = self.flip_if_needed(self.vs.read())
-        try:
-            frame=detect(frame)
-        except:
-            print("Error in lanedetection")
+#        try:
+            #frame=detect(frame)
+        frame=detect_webcam(frame)
+        #except:
+        #    print("Error in lanedetection")
         ret, jpeg = cv2.imencode('.jpg', frame)
-        return jpeg.tobytes()
+
+        return jpeg
