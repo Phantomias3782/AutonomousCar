@@ -1,1 +1,5 @@
-RPi.GPIO
+numpy
+matplotlib
+opencv-python
+Flask
+imutils
