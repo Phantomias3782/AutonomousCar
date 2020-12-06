@@ -161,7 +161,7 @@ def calibrate(image, marker_width, marker_distance):
     print("marker distance ckeck", distance)
 
 def information_draw(boxes, confidences, class_ids,colors, class_list, img):
-
+    
     # set Non-maximum Suppression and normal threshold
     threshold = 0.5
     nms_threshold = 0.4
@@ -304,7 +304,7 @@ def detect_webcam(tiny=True):
     video_capture.release()
 
 ###############################################
-#os.chdir("/Users/andreasmac/Documents/Github/AutonomousCar/object-detection")
+# os.chdir("/Users/andreasmac/Documents/Github/AutonomousCar/object-detection")
 
 # directory = "../lane_detection/google_img/"
 directory = "./test-images/"
