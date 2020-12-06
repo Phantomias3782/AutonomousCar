@@ -115,7 +115,7 @@ def calculate_distance(image, object_width):
 
     else:
 
-        calibrate("./test_images/marker.jpg", marker_width, marker_distance)
+        calibrate("./test-images/marker.jpg", marker_width, marker_distance)
 
         # calcuate distance
         distance = (marker_width * focalLength) / object_width
@@ -278,7 +278,7 @@ import os
 os.chdir("/Users/andreasmac/Documents/Github/AutonomousCar/object-detection")
 
 # directory = "../lane_detection/google_img"
-directory = "./test_images/"
+directory = "./test-images/"
 
 # calibrate(directory+"marker.jpg", 16, 50)
 
