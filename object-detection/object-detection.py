@@ -171,8 +171,11 @@ def information_draw(boxes, confidences, class_ids, class_list, img):
     # generate color palette
     colors = np.random.uniform(0, 255, size=(len(class_list), 3))
 
-    # set font
+    # set font and other settings
     font = cv2.FONT_HERSHEY_PLAIN
+    rec_width = 3
+    txt_height = 3
+    text_width = 3
 
     for i in range(len(boxes)):
 
@@ -182,8 +185,8 @@ def information_draw(boxes, confidences, class_ids, class_list, img):
             label = str(class_list[class_ids[i]])
             full_label = label + ", " + str(round(confidences[i] * 100, 2))
             color = colors[class_ids[i]]
-            cv2.rectangle(img, (x, y), (x + w, y + h), color, 3)
-            cv2.putText(img, label, (x, y -5), font, 1, color, 2)
+            cv2.rectangle(img, (x, y), (x + w, y + h), color, rec_width)
+            cv2.putText(img, full_label, (x, y -5), font, txt_height, color, text_width)
 
             # send information if specific object in image
             reaction = check_reaction(label)
