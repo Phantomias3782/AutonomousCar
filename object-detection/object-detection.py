@@ -49,7 +49,8 @@ def load_yolo(tiny = True):
 def information_cal(outs, height, width):
     "calculate objects in images"
 
-    # Showing informations on the screen
+    # init lists and set confidence treshhold
+    confidence_treshold = 0.5
     class_ids = []
     confidences = []
     boxes = []
@@ -62,18 +63,21 @@ def information_cal(outs, height, width):
             class_id = np.argmax(scores)
             confidence = scores[class_id]
 
-            if confidence > 0.5: # possibility to reset confidence
+            # check if object is detected about given confidence
+            if confidence > confidence_treshold:
 
-                # Object detected
                 center_x = int(detection[0] * width)
                 center_y = int(detection[1] * height)
+
+                # calcluate width and height of box
                 w = int(detection[2] * width)
                 h = int(detection[3] * height)
 
-                # Rectangle coordinates
+                # calculate x and y coordinates of box
                 x = int(center_x - w / 2)
                 y = int(center_y - h / 2)
 
+                # save informations about boxes, containing confidence and class
                 boxes.append([x, y, w, h])
                 confidences.append(float(confidence))
                 class_ids.append(class_id)
@@ -242,8 +246,8 @@ def detect_webcam(tiny=True):
     # get camera feed
     video_capture = cv2.VideoCapture(0)
 
-    output_layers, net = object_detection.load_yolo(tiny=tiny)
-    class_list = object_detection.load_coco_names()
+    output_layers, net = load_yolo(tiny=tiny)
+    class_list = load_coco_names()
 
     while True:
 
@@ -260,7 +264,7 @@ def detect_webcam(tiny=True):
         outs = net.forward(output_layers)
 
         # calculate boxes and classifications
-        w, h, x, y, boxes, confidences, class_ids = information_cal(outs, height, width)
+        boxes, confidences, class_ids = information_cal(outs, height, width)
 
         # draw boxes and classification
         frame = information_draw(boxes, confidences, class_ids, class_list, frame)
@@ -282,13 +286,13 @@ directory = "./test-images/"
 
 # calibrate(directory+"marker.jpg", 16, 50)
 
-detect_image(directory+"neuhauser-strasse-detail.jpg", tiny = True)
+# detect_image(directory+"neuhauser-strasse-detail.jpg", tiny = True)
 
-# for image_path in list(os.listdir(directory)):
+for image_path in list(os.listdir(directory)):
 
-#     try:
-#         detect_image(directory+image_path, tiny = False)
-#     except:
-#         print("Failed with image: ", image_path)
+    try:
+        detect_image(directory+image_path, tiny = False)
+    except:
+        print("Failed with image: ", image_path)
 
-# detect_webcam()
+# detect_webcam(tiny=True)
