@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import matplotlib.image as mping
 import time
 import imutils
+import os
 
 def load_coco_names():
     "load names of coco text file"
@@ -112,7 +113,7 @@ def calculate_distance(image, object_width):
     if "focalLength" in globals():
 
         # calcuate distance
-        distance = (marker_width * focalLength) / object_width
+        distance = round((marker_width * focalLength) / object_width, 2)
 
         # return distance
         return distance
@@ -122,7 +123,7 @@ def calculate_distance(image, object_width):
         calibrate("./test-images/marker.jpg", marker_width, marker_distance)
 
         # calcuate distance
-        distance = (marker_width * focalLength) / object_width
+        distance = round((marker_width * focalLength) / object_width, 2)
 
         # return distance
         return distance
@@ -130,8 +131,7 @@ def calculate_distance(image, object_width):
 def calibrate(image, marker_width, marker_distance):
     "calibrate first image from camera"
 
-    # fixed parameters in cm
-
+    # load image
     image = mping.imread(image)
 
     # convert the image to grayscale, blur it, detect edges
@@ -157,7 +157,7 @@ def calibrate(image, marker_width, marker_distance):
     focalLength = (marker[1][0] * marker_distance) / marker_width
 
     # get distance to marker and print to check 
-    distance = (marker_width * focalLength) / marker[1][0]
+    distance = round((marker_width * focalLength) / marker[1][0], 2)
     print("marker distance ckeck", distance)
 
 def information_draw(boxes, confidences, class_ids, class_list, img):
@@ -180,6 +180,7 @@ def information_draw(boxes, confidences, class_ids, class_list, img):
 
             x, y, w, h = boxes[i]
             label = str(class_list[class_ids[i]])
+            full_label = label + ", " + str(round(confidences[i] * 100, 2))
             color = colors[class_ids[i]]
             cv2.rectangle(img, (x, y), (x + w, y + h), color, 3)
             cv2.putText(img, label, (x, y -5), font, 1, color, 2)
@@ -192,7 +193,7 @@ def information_draw(boxes, confidences, class_ids, class_list, img):
                 # calculate distance
                 distance = calculate_distance(img, w)
 
-                print("distance to ", label, "is ", distance)
+                print("distance to ", label, "is ", distance, "cm")
 
                 # interface to car movement! stop under certain distance to object
 
@@ -279,21 +280,20 @@ def detect_webcam(tiny=True):
     video_capture.release()
 
 ###############################################
-import os
 os.chdir("/Users/andreasmac/Documents/Github/AutonomousCar/object-detection")
 
-# directory = "../lane_detection/google_img"
+# directory = "../lane_detection/google_img/"
 directory = "./test-images/"
 
 # calibrate(directory+"marker.jpg", 16, 50)
 
-# detect_image(directory+"neuhauser-strasse-detail.jpg", tiny = True)
+# detect_image(directory+"simon.jpg", tiny = False)
 
-for image_path in list(os.listdir(directory)):
+# for image_path in list(os.listdir(directory)):
 
-    try:
-        detect_image(directory+image_path, tiny = False)
-    except:
-        print("Failed with image: ", image_path)
+#     try:
+#         detect_image(directory+image_path, tiny = False)
+#     except:
+#         print("Failed with image: ", image_path)
 
-# detect_webcam(tiny=True)
+detect_webcam(tiny=True)
