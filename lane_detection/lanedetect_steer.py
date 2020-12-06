@@ -17,7 +17,7 @@ def grayscale(img):
     #return cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
     # Or use BGR2GRAY if you read an image with cv2.imread()
     return cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-
+    
 def canny(img, low_threshold, high_threshold):
     """Applies the Canny transform"""
     return cv2.Canny(img, low_threshold, high_threshold)
@@ -157,6 +157,12 @@ def get_vertices(image):
     top_left     = [cols*0.3, rows*0.2]
     bottom_right = [cols*0.95, rows]
     top_right    = [cols*0.7, rows*0.2] 
+
+    # rows, cols = image.shape[:2]
+    # bottom_left  = [cols*0.15, rows]
+    # top_left     = [cols*0.45, rows*0.6]
+    # bottom_right = [cols*0.95, rows]
+    # top_right    = [cols*0.55, rows*0.6] 
     
     ver = np.array([[bottom_left, top_left, top_right, bottom_right]], dtype=np.int32)
     return ver
@@ -184,4 +190,4 @@ def lane_finding_pipeline(image):
     #Draw lines on edges
     output = weighted_img(img = houghed_lines, initial_img = image, α=0.8, β=1., γ=0.)
     
-    return 
+    return output
