@@ -87,9 +87,9 @@ def information_cal(outs, height, width):
 
 def check_reaction(label):
     "if label in speified list send signal"
-
+    print(label)
     # set list
-    check_list = ["person", "car"]
+    check_list = ["person", "car","cell phone"]
 
     if label in check_list:
 
@@ -165,7 +165,7 @@ def information_draw(boxes, confidences, class_ids, class_list, img):
     # set Non-maximum Suppression and normal threshold
     threshold = 0.5
     nms_threshold = 0.4
-
+    print(confidences)
     indexes = cv2.dnn.NMSBoxes(boxes, confidences, threshold, nms_threshold)
 
     # generate color palette
@@ -267,8 +267,9 @@ def detect_webcam(frame,tiny=True):
     outs = net.forward(output_layers)
 
     # calculate boxes and 
+    
     boxes, confidences, class_ids = information_cal(outs, height, width)
 
     # draw boxes and classification
-    frame = information_draw(boxes, confidences, class_ids, class_list, frame)
-    return frame
+    frame2 = information_draw(boxes, confidences, class_ids, class_list, frame)
+    return frame2

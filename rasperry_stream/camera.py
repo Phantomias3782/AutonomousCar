@@ -29,9 +29,9 @@ class VideoCamera(object):
         frame = self.flip_if_needed(self.vs.read())
 #        try:
             #frame=detect(frame)
-        frame=detect_webcam(frame)
+        frame2=detect_webcam(frame)
         #except:
         #    print("Error in lanedetection")
-        ret, jpeg = cv2.imencode('.jpg', frame)
+        ret, jpeg = cv2.imencode('.jpg', frame2)
 
         return jpeg
