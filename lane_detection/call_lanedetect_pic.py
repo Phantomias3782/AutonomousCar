@@ -6,8 +6,8 @@ import lanedetect
 import cv2
 
 
-for image_path in list(os.listdir('./flatlane_img')):
-    image = mpimg.imread(f'./flatlane_img/{image_path}')
+for image_path in list(os.listdir('./flatlane_straight')):
+    image = mpimg.imread(f'./flatlane_straight/{image_path}')
     print(image_path)
 
     # plot input image
