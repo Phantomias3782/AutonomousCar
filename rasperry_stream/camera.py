@@ -7,7 +7,7 @@ from imutils.video.pivideostream import PiVideoStream
 import imutils
 import time
 import numpy as np
-from call_lanedetect_cam import detect
+from lanedetect_steer import lane_finding_pipeline
 from object_detection import detect_webcam
 
 
@@ -27,11 +27,12 @@ class VideoCamera(object):
 
     def get_frame(self):
         frame = self.flip_if_needed(self.vs.read())
-#        try:
-            #frame=detect(frame)
-        frame=detect_webcam(frame)
-        #except:
-        #    print("Error in lanedetection")
-        ret, jpeg = cv2.imencode('.jpg', frame)
+        try:
+            #frame2=detect_webcam(frame)
+            frame2=lane_finding_pipeline(frame)
+        except:
+            print("Error in detection")
+            frame2=frame
+        ret, jpeg = cv2.imencode('.jpg', frame2)
 
         return jpeg
