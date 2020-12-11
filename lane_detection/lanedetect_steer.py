@@ -26,7 +26,7 @@ def gaussian_blur(img, kernel_size):
     """Applies a Gaussian Noise kernel"""
     return cv2.GaussianBlur(img, (kernel_size, kernel_size), 0)
 
-def region_of_interest(img, vertices):
+def region_of_interest(img, vertices, vertices_car):
     """
     Applies an image mask.
     
@@ -49,8 +49,11 @@ def region_of_interest(img, vertices):
     
     #returning the image only where mask pixels are nonzero
     masked_image = cv2.bitwise_and(img, mask)
-    return masked_image
 
+    #cover also the nose of the car at bottom of stream
+    cv2.fillConvexPoly(masked_image, vertices_car, 0)
+
+    return masked_image
 
 def draw_lines(img, lines, color=[255, 0, 0], thickness=10):
     """
@@ -73,90 +76,26 @@ def draw_lines(img, lines, color=[255, 0, 0], thickness=10):
         for x1,y1,x2,y2 in line:
             cv2.line(img, (x1, y1), (x2, y2), color, thickness)
 
-# def slope_lines(image,lines):
+def homography(img):
+
+    # Copy Image for formating
+    img_dst = img
+
+    # Four corners of source image
+    pts_src = np.array([[0, 0], [1920, 0], [1920, 1080],[0, 1080]]) #OL-OR-UR-UL|X(vertical)-Y(horizontal)
+
+    # Four corners of destination image
+    pts_dst = np.array([[-1000, -600], [2920, -600], [1300, 1080],[0, 1080]])
+
+    # Calculate Homography
+    h, status = cv2.findHomography(pts_src, pts_dst)
     
-#     img = image.copy()
-#     poly_vertices = []
-#     order = [0,1,3,2]
+    # Warp source image to destination based on homography
+    img_out = cv2.warpPerspective(img, h, (img.shape[1],img.shape[0]))
 
-#     left_lines = [] # Like /
-#     right_lines = [] # Like \
-#     # middle_lines = [] # Like |
-#     for line in lines:
-#         for x1,y1,x2,y2 in line:
-
-#             if x1 == x2:
-#                 pass #Vertical Lines
-#             else:
-#                 m = (y2 - y1) / (x2 - x1)
-#                 c = y1 - m * x1
-
-#                 if m < 0:
-#                     left_lines.append((m,c))
-#                 elif m >= 0:
-#                     right_lines.append((m,c))
-        
-#     left_line = np.mean(left_lines, axis=0)
-#     right_line = np.mean(right_lines, axis=0)
-
-
-#     #middle_line = [ right_line[0] - left_line[0], right_line[1] - left_line[1]]
-
-#     # # calculating middle line
-#     # height, width, channels = img.shape
-#     # middle_x1 = (width/2)
-#     # middle_y1 = 0
-#     # middle_x2 = (right_line[1]-left_line[1])/(left_line[0]-right_line[0])
-#     # middle_y2 = (left_line[0]*middle_x2)+left_line[1]
-
-#     # print('x1')
-#     # print(middle_x1)
-#     # print('y1')
-#     # print(middle_y1)
-#     # print('x2')
-#     # print(middle_x2)
-#     # print('y2')
-#     # print(middle_y2)
-
-#     # middle_m = (middle_y1-middle_y2)/(middle_x1-middle_x2)
-#     # middle_c = (middle_y2)/(middle_m*middle_x2)
-
-#     # middle_line = [middle_m, middle_c]
-
-
-#     i = 0
-#     for slope, intercept in [left_line, right_line]:
-
-#         #getting complete height of image in y1
-#         rows, cols = image.shape[:2]
-#         y1= int(rows) #image.shape[0]
-
-#         #taking y2 upto 60% of actual height or 60% of y1
-#         y2= int(rows*0.6) #int(0.6*y1)
-
-#         #we know that equation of line is y=mx +c so we can write it x=(y-c)/m
-#         x1=int((y1-intercept)/slope)
-#         x2=int((y2-intercept)/slope)
-
-#         poly_vertices.append((x1, y1))
-#         poly_vertices.append((x2, y2))
-        
-#         if i == 0: left_line = np.array([[[x1,y1,x2,y2]]])
-#         if i == 1: right_line = np.array([[[x1,y1,x2,y2]]])
-#         #if i == 2: middle_line = np.array([[[x1,y1,x2,y2]]])
-#         i+=1
-    
-#     poly_vertices = [poly_vertices[i] for i in order]
-#     cv2.fillPoly(img, pts = np.array([poly_vertices],'int32'), color = (0,255,0))
-#     draw_lines(img, left_line, color=[255, 0, 0])
-#     draw_lines(img, right_line, color=[255, 0, 0])
-#     return cv2.addWeighted(image,0.7,img,0.4,0.)
+    return img_out
 
 def slope_lines(image,lines):
-    
-    img = image.copy()
-    poly_vertices = []
-    order = [0,1,3,2]
 
     left_lines = [] # Like /
     right_lines = [] # Like \
@@ -177,8 +116,32 @@ def slope_lines(image,lines):
     left_line = np.mean(left_lines, axis=0)
     right_line = np.mean(right_lines, axis=0)
 
-    #print(left_line, right_line)
+    return left_line, right_line
 
+def steer(image, left_line, right_line):
+    # center of image
+    img_y, img_x = image.shape[:2]
+    cv2.line(image, (int(img_x/2),0), (int(img_x/2),img_y), color = (0, 255, 0), thickness = 10)
+    
+    # middle line:
+    y1 = int(img_y*0.6) # height of slope
+    y2 = int(img_y)
+    x1 = int(abs((y1 - right_line[1]) / right_line[0]) - abs((y1 - left_line[1]) / left_line[0]))
+    x2 = int(img_x/2)
+
+    cv2.line(image, (x1,y1), (x2,y2), color = (0, 0, 255), thickness = 10)
+
+    steering = (x2 - x1)/100
+    print(steering)
+
+    return steering
+
+def slope(image, left_line, right_line):
+    
+    img = image.copy()
+    poly_vertices = []
+    order = [0,1,3,2]
+    
     for slope, intercept in [left_line, right_line]:
 
         #getting complete height of image in y1
@@ -197,31 +160,8 @@ def slope_lines(image,lines):
     
     poly_vertices = [poly_vertices[i] for i in order]
     cv2.fillPoly(img, pts = np.array([poly_vertices],'int32'), color = (0,255,0))
+
     return cv2.addWeighted(image,0.7,img,0.4,0.)
-    
-    #cv2.polylines(img,np.array([poly_vertices],'int32'), True, (0,0,255), 10)
-    #print(poly_vertices)
-
-def display_lines(image, lines):
-    #line_image = np.zeros_like(image)
-    if lines is not None:
-        for line in lines:
-            x1, y1, x2, y2 = line.reshape(4)
-            cv2.line(image, (x1,y1), (x2, y2), color = (0, 255, 0), thickness = 10)
-    return image
-
-def center_line(image, lines):
-    x1_1, y1_1, x2_1, y2_1 = lines[0].reshape(4)
-    x1_2, y1_2, x2_2, y2_2 = lines[1].reshape(4)
-    
-    ym1 = y1_1
-    ym2 = y2_1
-    
-    xm1 = int(x1_1 - (x1_1 - x1_2)/2)
-    xm2 = int(x2_1 - (x2_1 - x2_2)/2)
-    
-    cv2.line(image, (xm1,ym1), (xm2,ym2), color = (0, 0, 255), thickness = 10)
-    return image
 
 def hough_lines(img, rho, theta, threshold, min_line_len, max_line_gap):
     """
@@ -231,13 +171,8 @@ def hough_lines(img, rho, theta, threshold, min_line_len, max_line_gap):
     """
     lines = cv2.HoughLinesP(img, rho, theta, threshold, np.array([]), minLineLength=min_line_len, maxLineGap=max_line_gap)
     line_img = np.zeros((img.shape[0], img.shape[1], 3), dtype=np.uint8)
-    draw_lines(line_img, lines)
-    #line_img = display_lines(line_img, lines) 
-    line_img = slope_lines(line_img,lines)
-    #center_img = center_line(line_img, lines)
-    #draw_lines(center_img, lines)
 
-    return line_img
+    return lines, line_img
 
 def weighted_img(img, initial_img, α=0.1, β=1., γ=0.):
     """
@@ -255,24 +190,27 @@ def weighted_img(img, initial_img, α=0.1, β=1., γ=0.):
     #lines_edges = cv2.polylines(lines_edges,get_vertices(img), True, (0,0,255), 10)
     return lines_edges
 
-def get_vertices(image):
-    rows, cols = image.shape[:2]
-    bottom_left  = [cols*0, rows]
-    top_left     = [cols*0.2, rows*0.2]
-    bottom_right = [cols*1, rows]
-    top_right    = [cols*0.8, rows*0.2] 
+def get_vertices(image, scope):
 
-    # rows, cols = image.shape[:2]
-    # bottom_left  = [cols*0.15, rows]
-    # top_left     = [cols*0.45, rows*0.6]
-    # bottom_right = [cols*0.95, rows]
-    # top_right    = [cols*0.55, rows*0.6] 
-    
-    ver = np.array([[bottom_left, top_left, top_right, bottom_right]], dtype=np.int32)
-    return ver
+    if scope == 'border':
+        rows, cols = image.shape[:2]
+        bottom_left  = [cols*-0.02, rows]
+        top_left     = [cols*0.3, rows*0.3]
+        bottom_right = [cols*1.02, rows]
+        top_right    = [cols*0.7, rows*0.3] 
 
+        ver = np.array([[bottom_left, top_left, top_right, bottom_right]], dtype=np.int32)
+        return ver
 
+    elif scope =='car':
+        rows, cols = image.shape[:2]
+        bottom_left  = [cols*0.2, rows]
+        top_left     = [cols*0.4, rows*0.9]
+        bottom_right = [cols*0.8, rows]
+        top_right    = [cols*0.6, rows*0.9] 
 
+        ver = np.array([[bottom_left, top_left, top_right, bottom_right]], dtype=np.int32)
+        return ver
 
 ################################################################################################
 ################################         calling pipeline       ################################
@@ -282,21 +220,23 @@ def get_vertices(image):
 def lane_finding_pipeline(image):
     
     #Grayscale
-    #gray_img = grayscale(image)
-    gray_img = image
+    gray_img = grayscale(image)
     #Gaussian Smoothing
     smoothed_img = gaussian_blur(img = gray_img, kernel_size = 5)
     #Canny Edge Detection
-    canny_img = canny(img = smoothed_img, low_threshold = 50, high_threshold = 150) # 100 150
+    canny_img = canny(img = smoothed_img, low_threshold = 50, high_threshold = 150)
     #Masked Image Within a Polygon
-    masked_img = region_of_interest(img = canny_img, vertices = get_vertices(image))
+    masked_img = region_of_interest(img = canny_img, vertices = get_vertices(image, 'border'), vertices_car = get_vertices(image, 'car'))
     #Hough Transform Lines
-    #houghed_lines = hough_lines(img = masked_img, rho = 1, theta = np.pi/180, threshold = 20, min_line_len = 20, max_line_gap = 180)
-    houghed_lines = hough_lines(img = masked_img, rho = 2, theta = np.pi/180, threshold = 60, min_line_len = 20, max_line_gap = 60)
+    lines, line_img = hough_lines(img = masked_img, rho = 1, theta = np.pi/180, threshold = 20, min_line_len = 20, max_line_gap = 180)
+    # draw left and right line
+    left_line, right_line = slope_lines(line_img, lines)
+    # draw slope between two lines
+    slope_weighted_img = slope(line_img, left_line, right_line)
     #Draw lines on edges
-    output = weighted_img(img = houghed_lines, initial_img = image, α=0.8, β=1., γ=0.)
-    
-    #output = houghed_lines
+    output = weighted_img(img = slope_weighted_img, initial_img = image, α=0.8, β=1., γ=0.)
+
+    steer(image, left_line, right_line)
 
     return output
 
@@ -306,7 +246,8 @@ def lane_finding_pipeline(image):
 ################################################################################################
 
 
-# image = mpimg.imread(f'./flatlane_straight/flatlane_straight_116.jpg')
+# image = mpimg.imread(f'./Flat_adjusted/Flat_adjusted_09.jpg')
+
 # # plot input image
 # fig = plt.figure(figsize=(20, 10),num='TEST')
 # ax = fig.add_subplot(1, 2, 1,xticks=[], yticks=[])
