@@ -3,3 +3,6 @@ matplotlib
 opencv-python
 Flask
 imutils
+scipy
+keras
+tensorflow

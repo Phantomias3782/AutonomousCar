@@ -9,7 +9,7 @@ import time
 import numpy as np
 from lanedetect_steer import lane_finding_pipeline
 from object_detection import detect_webcam
-
+from deep_car import detect
 
 class VideoCamera(object):
     def __init__(self, flip = False):
@@ -29,7 +29,9 @@ class VideoCamera(object):
         frame = self.flip_if_needed(self.vs.read())
         try:
             #frame2=detect_webcam(frame)
-            frame2=lane_finding_pipeline(frame)
+        #frame2=detect(frame)
+            frame2=frame
+            #lane_finding_pipeline(frame)
         except:
             print("Error in detection")
             frame2=frame

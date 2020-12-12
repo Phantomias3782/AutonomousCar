@@ -1,4 +1,5 @@
 from keras.models import load_model
+import tensorflow as tf
 import cv2
 import numpy as np
 import os
@@ -36,10 +37,10 @@ def image_data_generator(image_paths, is_training=False):
 # X = image_data_generator(X_valid)
 
 
-
-model = load_model('lane_navigation.h5')
-def predict(frame)
-    frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-    Y_pred = model.predict(frame)
-    cv2.putText(frame,Y_pred)
-    return frame
+with tf.Graph().as_default():
+    model = load_model('lane_navigation.h5')
+    def detect(frame):
+        frame = np.asarray([img_preprocess(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))])
+        Y_pred = model.predict(frame)
+        cv2.putText(frame,Y_pred)
+        return frame
