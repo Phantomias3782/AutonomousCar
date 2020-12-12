@@ -1,5 +1,5 @@
 import os
-os.chdir('/Users/Syman/Documents/Studij/Semester05/Seminar/AutonomousCar/lane_detection')
+#os.chdir('/Users/Syman/Documents/Studij/Semester05/Seminar/AutonomousCar/lane_detection')
 
 # Do all the relevant imports
 import matplotlib.pyplot as plt
@@ -131,7 +131,7 @@ def steer(image, left_line, right_line):
 
     cv2.line(image, (x1,y1), (x2,y2), color = (0, 0, 255), thickness = 10)
 
-    steering = (x2 - x1)/100
+    steering = (x2 - x1)/720
 
     return steering
 
