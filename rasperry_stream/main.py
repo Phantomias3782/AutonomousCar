@@ -1,10 +1,12 @@
 from flask import Flask, render_template, Response, request
 from camera import VideoCamera
+from car_controll import controll_car
 import time
 import threading
 import os
 
 pi_camera = VideoCamera(flip=False) # flip pi camera if upside down.
+car = controll_car.Car()
 
 # App Globals (do not edit)
 app = Flask(__name__)
@@ -16,7 +18,8 @@ def index():
 def gen(camera):
     #get camera frame
     while True:
-        frame = camera.get_frame().tobytes()
+        frame, steering = camera.get_frame().tobytes()
+        car.steer(steering)
         yield (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
 

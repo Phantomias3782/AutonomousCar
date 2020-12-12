@@ -8,8 +8,6 @@ import imutils
 import time
 import numpy as np
 from object_detection import detect_webcam
-
-
 from lane_detection import lanedetect_steer
 
 
@@ -42,4 +40,4 @@ class VideoCamera(object):
             steering = 0
         ret, jpeg = cv2.imencode('.jpg', frame2)
 
-        return jpeg
+        return jpeg, steering
