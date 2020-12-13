@@ -24,7 +24,9 @@ class Car():
         self.steering.stop()
 
     def steer(self,steeringrate):
-        if steeringrate == 0:
+        if steeringrate == None:
+            print("Steering None")    
+        elif steeringrate == 0:
 #            print("input 0")
             self.steering.ChangeDutyCycle(self.STRAIGHT)    
         elif steeringrate > 0:
