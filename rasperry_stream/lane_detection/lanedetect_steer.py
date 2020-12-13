@@ -1,3 +1,6 @@
+import os
+#os.chdir('/Users/Syman/Documents/Studij/Semester05/Seminar/AutonomousCar/lane_detection')
+
 # Do all the relevant imports
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
@@ -123,13 +126,19 @@ def steer(image, left_line, right_line):
     # middle line:
     y1 = int(img_y*0.6) # height of slope
     y2 = int(img_y)
-    x1 = int(abs((y1 - right_line[1]) / right_line[0]) - abs((y1 - left_line[1]) / left_line[0]))
+    slope_l = (y1 - left_line[1]) / left_line[0]
+    slope_r = (y1 - right_line[1]) / right_line[0]
+    x1 = int( ( (slope_r - slope_l) / 2) + slope_l )
     x2 = int(img_x/2)
+
+    # mitte ungefähr bei 350
+
 
     cv2.line(image, (x1,y1), (x2,y2), color = (0, 0, 255), thickness = 10)
 
-    steering = (x2 - x1)/100
-    print(steering)
+    steering = (x2 - x1) /100
+    print('image'+str(img_x)+' - '+str(img_y))
+    print('slope_l : '+str(slope_l)+' slope_r: '+str(slope_r)+' slope_middle: '+str(x1)+' img_middle: '+str(x2)+' steering: '+str(steering))
 
     return steering
 
@@ -190,17 +199,17 @@ def weighted_img(img, initial_img, α=0.1, β=1., γ=0.):
 def get_vertices(image, scope):
 
     if scope == 'border':
-        rows, cols = image.shape[:2]
-        bottom_left  = [cols*-0.2, rows]
-        top_left     = [cols*0.2, rows*0.3]
-        bottom_right = [cols*1.2, rows]
-        top_right    = [cols*0.8, rows*0.3] 
-
         # rows, cols = image.shape[:2]
         # bottom_left  = [cols*-0.02, rows]
         # top_left     = [cols*0.3, rows*0.3]
         # bottom_right = [cols*1.02, rows]
         # top_right    = [cols*0.7, rows*0.3] 
+
+        rows, cols = image.shape[:2]
+        bottom_left  = [cols*-0.2, rows]
+        top_left     = [cols*0.2, rows*0.3]
+        bottom_right = [cols*1.2, rows]
+        top_right    = [cols*0.8, rows*0.3] 
 
         ver = np.array([[bottom_left, top_left, top_right, bottom_right]], dtype=np.int32)
         return ver
@@ -239,9 +248,9 @@ def lane_finding_pipeline(image):
     #Draw lines on edges
     output = weighted_img(img = slope_weighted_img, initial_img = image, α=0.8, β=1., γ=0.)
 
-    steer(image, left_line, right_line)
+    steering = steer(image, left_line, right_line)
 
-    return output
+    return output, steering
 
 
 ################################################################################################
