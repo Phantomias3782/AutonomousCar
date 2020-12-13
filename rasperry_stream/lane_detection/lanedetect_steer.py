@@ -128,7 +128,7 @@ def steer(image, left_line, right_line):
     y2 = int(img_y)
     slope_l = (y1 - left_line[1]) / left_line[0]
     slope_r = (y1 - right_line[1]) / right_line[0]
-    x1 = int(( slope_r - slope_l / 2) + slope_l )
+    x1 = int( ( (slope_r - slope_l) / 2) + slope_l )
     x2 = int(img_x/2)
 
     # mitte ungefähr bei 350
