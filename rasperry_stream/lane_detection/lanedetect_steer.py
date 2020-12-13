@@ -132,6 +132,7 @@ def steer(image, left_line, right_line):
     cv2.line(image, (x1,y1), (x2,y2), color = (0, 0, 255), thickness = 10)
 
     steering = (x2 - x1)/100
+    print('x2 : '+str(x2)+' x 1: '+str(x1)+' (x2-x1)/100: ' str(steering))
 
     return steering
 
