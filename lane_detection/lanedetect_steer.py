@@ -233,7 +233,6 @@ def lane_finding_pipeline(image):
     canny_img = canny(img = smoothed_img, low_threshold = 50, high_threshold = 150)
     #Masked Image Within a Polygon
     masked_img = region_of_interest(img = canny_img, vertices = get_vertices(image, 'border'), vertices_car = get_vertices(image, 'car'))
-    maske = region_of_interest(img = image, vertices = get_vertices(image, 'border'), vertices_car = get_vertices(image, 'car'))
     #Hough Transform Lines
     lines, line_img = hough_lines(img = masked_img, rho = 1, theta = np.pi/180, threshold = 20, min_line_len = 20, max_line_gap = 180)
     # draw left and right line
@@ -242,7 +241,7 @@ def lane_finding_pipeline(image):
     slope_weighted_img = slope(line_img, left_line, right_line)
     #Draw lines on edges
     output = weighted_img(img = slope_weighted_img, initial_img = image, α=0.8, β=1., γ=0.)
-
+    maske = region_of_interest(img = output, vertices = get_vertices(image, 'border'), vertices_car = get_vertices(image, 'car'))
     steer(image, left_line, right_line)
 
     output = maske
@@ -255,20 +254,20 @@ def lane_finding_pipeline(image):
 ################################################################################################
 
 
-# image = mpimg.imread(f'./Flat_adjusted/Flat_adjusted_09.jpg')
+image = mpimg.imread(f'./Flat_adjusted/Flat_adjusted_09.jpg')
 
-# # plot input image
-# fig = plt.figure(figsize=(20, 10),num='TEST')
-# ax = fig.add_subplot(1, 2, 1,xticks=[], yticks=[])
-# plt.imshow(image)
-# ax.set_title("Input Image")
-# ax = fig.add_subplot(1, 2, 2,xticks=[], yticks=[])
+# plot input image
+fig = plt.figure(figsize=(20, 10),num='TEST')
+ax = fig.add_subplot(1, 2, 1,xticks=[], yticks=[])
+plt.imshow(image)
+ax.set_title("Input Image")
+ax = fig.add_subplot(1, 2, 2,xticks=[], yticks=[])
 
-# picture = lane_finding_pipeline(image)
-# plt.imshow(picture)
+picture = lane_finding_pipeline(image)
+plt.imshow(picture)
 
-# # plot also processed image
-# ax.set_title("Output Image [Lane Line Detected]") 
-# plt.show()
+# plot also processed image
+ax.set_title("Output Image [Lane Line Detected]") 
+plt.show()
 
   

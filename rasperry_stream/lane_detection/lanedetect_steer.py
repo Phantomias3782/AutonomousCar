@@ -247,6 +247,7 @@ def lane_finding_pipeline(image):
     slope_weighted_img = slope(line_img, left_line, right_line)
     #Draw lines on edges
     output = weighted_img(img = slope_weighted_img, initial_img = image, α=0.8, β=1., γ=0.)
+    output = region_of_interest(img = output, vertices = get_vertices(image, 'border'), vertices_car = get_vertices(image, 'car'))
 
     steering = steer(image, left_line, right_line)
 
