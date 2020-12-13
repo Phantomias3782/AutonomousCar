@@ -1,4 +1,5 @@
 import RPi.GPIO as IO
+import time
 
 class Car():
     def __init__(self):
@@ -11,10 +12,11 @@ class Car():
         self.steering =IO.PWM(35,250)
 
         #define max values
-        self.FULL_LEFT=41
-        self.STRAIGHT=33
-        self.FULL_RIGHT=20
-        
+        self.FULL_LEFT=44
+        self.STRAIGHT=34
+        self.FULL_RIGHT=19
+        self.LEFT=self.FULL_LEFT-self.STRAIGHT
+        self.RIGHT=self.STRAIGHT-self.FULL_RIGHT
         #set steering dutycycle to 0
         self.steering.start(0)
 
@@ -22,19 +24,42 @@ class Car():
         self.steering.stop()
 
     def steer(self,steeringrate):
+#        print("was hier")
+
+
+
+        steeringrate=steeringrate*-6.5
+
+
+
+
         error=False
+        
         if steeringrate == 0:
-            self.steerig.ChangeDutyCycle(self.STRAIGHT)
-        elif steeringrate > 0 and steeringrate <= 1:
-            self.steerig.ChangeDutyCycle(self.FULL_LEFT * steeringrate)
-        elif steeringrate < 0 and steeringrate >= -1:
-            steeringrate = abs(steeringrate)
-            self.steerig.ChangeDutyCycle(self.FULL_RIGHT * steeringrate)
+#            print("input 0")
+            self.steering.ChangeDutyCycle(self.STRAIGHT)    
+        elif steeringrate > 0:
+            #print("input left")
+#            print(self.STRAIGHT + self.LEFT * steeringrate)
+            steeringrate=self.STRAIGHT + self.LEFT * steeringrate            
+            if steeringrate > self.FULL_LEFT:
+                steeringrate=self.FULL_LEFT
+            self.steering.ChangeDutyCycle(steeringrate)
+        elif steeringrate < 0:
+            #print("input right")
+            steeringrate=self.STRAIGHT - self.RIGHT * abs(steeringrate)
+            if steeringrate < self.FULL_RIGHT:
+                steeringrate=self.FULL_RIGHT
+            self.steering.ChangeDutyCycle(steeringrate)
         else:
-            print("Steeringinput too high!!!")
-        time.sleep(1)
-        #fix twitching of servo with resetting the dc to 0
-        self.steerig.ChangeDutyCycle(0)
+            print("Steeringinput ERROR!!!")
+
+#        time.sleep(0.5)
+ #       self.steering.ChangeDutyCycle(0)
         if error:
             return False
         return True
+    
+#car = Car()#
+#car.steer(
+#car.steer(-1)
