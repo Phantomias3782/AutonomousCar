@@ -126,13 +126,18 @@ def steer(image, left_line, right_line):
     # middle line:
     y1 = int(img_y*0.6) # height of slope
     y2 = int(img_y)
-    x1 = int((((y1 - right_line[1]) / right_line[0] - (y1 - left_line[1]) / left_line[0])/2) + (y1 - right_line[1]) / right_line[0])
+    slope_l = (y1 - left_line[1]) / left_line[0]
+    slope_r = (y1 - right_line[1]) / right_line[0]
+    x1 = int(( slope_r - slope_l / 2) + slope_l )
     x2 = int(img_x/2)
+
+    # mitte ungefähr bei 350
+
 
     cv2.line(image, (x1,y1), (x2,y2), color = (0, 0, 255), thickness = 10)
 
-    steering = (x2 - x1)/100
-    print('x2 : '+str(x2)+' x 1: '+str(x1)+' (x2-x1)/100: '+str(steering))
+    steering = (x2 - x1) #/100
+    print('slope_l : '+str(slope_l)+' slope_r: '+str(slope_r)+' steering: '+str(steering))
 
     return steering
 
