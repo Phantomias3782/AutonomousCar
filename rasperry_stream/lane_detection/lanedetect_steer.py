@@ -1,5 +1,5 @@
 import os
-#os.chdir('/Users/Syman/Documents/Studij/Semester05/Seminar/AutonomousCar/lane_detection')
+os.chdir('/Users/Syman/Documents/Studij/Semester05/Seminar/AutonomousCar/lane_detection')
 
 # Do all the relevant imports
 import matplotlib.pyplot as plt
@@ -126,19 +126,13 @@ def steer(image, left_line, right_line):
     # middle line:
     y1 = int(img_y*0.6) # height of slope
     y2 = int(img_y)
-    slope_l = (y1 - left_line[1]) / left_line[0]
-    slope_r = (y1 - right_line[1]) / right_line[0]
-    x1 = int( ( (slope_r - slope_l) / 2) + slope_l )
+    x1 = int(abs((y1 - right_line[1]) / right_line[0]) - abs((y1 - left_line[1]) / left_line[0]))
     x2 = int(img_x/2)
-
-    # mitte ungefähr bei 350
-
 
     cv2.line(image, (x1,y1), (x2,y2), color = (0, 0, 255), thickness = 10)
 
-    steering = (x2 - x1) /100
-    print('image'+str(img_x)+' - '+str(img_y))
-    print('slope_l : '+str(slope_l)+' slope_r: '+str(slope_r)+' slope_middle: '+str(x1)+' img_middle: '+str(x2)+' steering: '+str(steering))
+    steering = (x2 - x1)/100
+    print(steering)
 
     return steering
 
@@ -200,10 +194,16 @@ def get_vertices(image, scope):
 
     if scope == 'border':
         rows, cols = image.shape[:2]
-        bottom_left  = [cols*-0.02, rows]
-        top_left     = [cols*0.3, rows*0.3]
-        bottom_right = [cols*1.02, rows]
-        top_right    = [cols*0.7, rows*0.3] 
+        bottom_left  = [cols*-0.2, rows]
+        top_left     = [cols*0.2, rows*0.3]
+        bottom_right = [cols*1.2, rows]
+        top_right    = [cols*0.8, rows*0.3] 
+
+        # rows, cols = image.shape[:2]
+        # bottom_left  = [cols*-0.02, rows]
+        # top_left     = [cols*0.3, rows*0.3]
+        # bottom_right = [cols*1.02, rows]
+        # top_right    = [cols*0.7, rows*0.3] 
 
         ver = np.array([[bottom_left, top_left, top_right, bottom_right]], dtype=np.int32)
         return ver
@@ -233,6 +233,7 @@ def lane_finding_pipeline(image):
     canny_img = canny(img = smoothed_img, low_threshold = 50, high_threshold = 150)
     #Masked Image Within a Polygon
     masked_img = region_of_interest(img = canny_img, vertices = get_vertices(image, 'border'), vertices_car = get_vertices(image, 'car'))
+    maske = region_of_interest(img = image, vertices = get_vertices(image, 'border'), vertices_car = get_vertices(image, 'car'))
     #Hough Transform Lines
     lines, line_img = hough_lines(img = masked_img, rho = 1, theta = np.pi/180, threshold = 20, min_line_len = 20, max_line_gap = 180)
     # draw left and right line
@@ -242,9 +243,11 @@ def lane_finding_pipeline(image):
     #Draw lines on edges
     output = weighted_img(img = slope_weighted_img, initial_img = image, α=0.8, β=1., γ=0.)
 
-    steering = steer(image, left_line, right_line)
+    steer(image, left_line, right_line)
 
-    return output, steering
+    output = maske
+
+    return output
 
 
 ################################################################################################
@@ -252,20 +255,20 @@ def lane_finding_pipeline(image):
 ################################################################################################
 
 
-# image = mpimg.imread(f'./Flat_adjusted/Flat_adjusted_09.jpg')
+image = mpimg.imread(f'./Flat_adjusted/Flat_adjusted_09.jpg')
 
-# # plot input image
-# fig = plt.figure(figsize=(20, 10),num='TEST')
-# ax = fig.add_subplot(1, 2, 1,xticks=[], yticks=[])
-# plt.imshow(image)
-# ax.set_title("Input Image")
-# ax = fig.add_subplot(1, 2, 2,xticks=[], yticks=[])
+# plot input image
+fig = plt.figure(figsize=(20, 10),num='TEST')
+ax = fig.add_subplot(1, 2, 1,xticks=[], yticks=[])
+plt.imshow(image)
+ax.set_title("Input Image")
+ax = fig.add_subplot(1, 2, 2,xticks=[], yticks=[])
 
-# picture = lane_finding_pipeline(image)
-# plt.imshow(picture)
+picture = lane_finding_pipeline(image)
+plt.imshow(picture)
 
-# # plot also processed image
-# ax.set_title("Output Image [Lane Line Detected]") 
-# plt.show()
+# plot also processed image
+ax.set_title("Output Image [Lane Line Detected]") 
+plt.show()
 
   
