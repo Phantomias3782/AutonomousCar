@@ -199,17 +199,11 @@ def weighted_img(img, initial_img, α=0.1, β=1., γ=0.):
 def get_vertices(image, scope):
 
     if scope == 'border':
-        # rows, cols = image.shape[:2]
-        # bottom_left  = [cols*-0.02, rows]
-        # top_left     = [cols*0.3, rows*0.3]
-        # bottom_right = [cols*1.02, rows]
-        # top_right    = [cols*0.7, rows*0.3] 
-
         rows, cols = image.shape[:2]
         bottom_left  = [cols*-0.2, rows]
-        top_left     = [cols*0.2, rows*0.3]
+        top_left     = [cols*0.2, rows*0.5]
         bottom_right = [cols*1.2, rows]
-        top_right    = [cols*0.8, rows*0.3] 
+        top_right    = [cols*0.8, rows*0.5] 
 
         ver = np.array([[bottom_left, top_left, top_right, bottom_right]], dtype=np.int32)
         return ver

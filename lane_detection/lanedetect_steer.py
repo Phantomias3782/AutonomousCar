@@ -195,9 +195,9 @@ def get_vertices(image, scope):
     if scope == 'border':
         rows, cols = image.shape[:2]
         bottom_left  = [cols*-0.2, rows]
-        top_left     = [cols*0.2, rows*0.3]
+        top_left     = [cols*0.2, rows*0.5]
         bottom_right = [cols*1.2, rows]
-        top_right    = [cols*0.8, rows*0.3] 
+        top_right    = [cols*0.8, rows*0.5] 
 
         # rows, cols = image.shape[:2]
         # bottom_left  = [cols*-0.02, rows]
@@ -241,7 +241,7 @@ def lane_finding_pipeline(image):
     slope_weighted_img = slope(line_img, left_line, right_line)
     #Draw lines on edges
     output = weighted_img(img = slope_weighted_img, initial_img = image, α=0.8, β=1., γ=0.)
-    maske = region_of_interest(img = canny_img, vertices = get_vertices(image, 'border'), vertices_car = get_vertices(image, 'car'))
+    maske = region_of_interest(img = image, vertices = get_vertices(image, 'border'), vertices_car = get_vertices(image, 'car'))
     steer(image, left_line, right_line)
 
     output = maske
