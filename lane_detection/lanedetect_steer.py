@@ -255,20 +255,20 @@ def lane_finding_pipeline(image):
 ################################################################################################
 
 
-image = mpimg.imread(f'./Flat_adjusted/Flat_adjusted_09.jpg')
+# image = mpimg.imread(f'./Flat_adjusted/Flat_adjusted_09.jpg')
 
-# plot input image
-fig = plt.figure(figsize=(20, 10),num='TEST')
-ax = fig.add_subplot(1, 2, 1,xticks=[], yticks=[])
-plt.imshow(image)
-ax.set_title("Input Image")
-ax = fig.add_subplot(1, 2, 2,xticks=[], yticks=[])
+# # plot input image
+# fig = plt.figure(figsize=(20, 10),num='TEST')
+# ax = fig.add_subplot(1, 2, 1,xticks=[], yticks=[])
+# plt.imshow(image)
+# ax.set_title("Input Image")
+# ax = fig.add_subplot(1, 2, 2,xticks=[], yticks=[])
 
-picture = lane_finding_pipeline(image)
-plt.imshow(picture)
+# picture = lane_finding_pipeline(image)
+# plt.imshow(picture)
 
-# plot also processed image
-ax.set_title("Output Image [Lane Line Detected]") 
-plt.show()
+# # plot also processed image
+# ax.set_title("Output Image [Lane Line Detected]") 
+# plt.show()
 
   
