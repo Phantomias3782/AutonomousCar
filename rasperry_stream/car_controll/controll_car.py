@@ -24,17 +24,6 @@ class Car():
         self.steering.stop()
 
     def steer(self,steeringrate):
-#        print("was hier")
-
-
-
-        steeringrate=steeringrate*-6.5
-
-
-
-
-        error=False
-        
         if steeringrate == 0:
 #            print("input 0")
             self.steering.ChangeDutyCycle(self.STRAIGHT)    
@@ -56,9 +45,6 @@ class Car():
 
 #        time.sleep(0.5)
  #       self.steering.ChangeDutyCycle(0)
-        if error:
-            return False
-        return True
     
 #car = Car()#
 #car.steer(
