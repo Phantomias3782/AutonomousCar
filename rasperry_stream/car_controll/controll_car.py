@@ -26,7 +26,8 @@ class Car():
     def steer(self,steeringrate):
 
         if steeringrate == None:
-            print("Steering None")    
+            pass
+        #print("Steering None")    
         else:
             steeringrate=steeringrate*3
             if steeringrate == 0:

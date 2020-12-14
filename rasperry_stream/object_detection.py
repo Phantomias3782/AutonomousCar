@@ -265,5 +265,5 @@ def detect_webcam(frame,tiny=True):
         frame2 = information_draw(boxes, confidences, class_ids, class_list, frame)
     except:
         print("Error in det")
-    time.sleep(10)
+    time.sleep(1)
     return frame2
