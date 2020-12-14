@@ -2,7 +2,7 @@ from flask import Flask, render_template, Response, request
 from camera import VideoCamera
 from car_controll import controll_car
 from lane_detection import lanedetect_steer
-from object_detection import detect_webcam
+from object_detection import detect_webcam,detect_webcam_delay
 import cv2
 import time
 import threading
@@ -20,14 +20,13 @@ def index():
     return render_template('index.html') #you can customze index.html here
 
 def gen(camera):
-    object_thread = threading.Thread(target=detect_webcam, args=(1,))
+    object_thread = threading.Thread(target=detect_webcam_delay, args=(1,))
     while True:
         frame = camera.get_frame()
         try:
-            #if not object_thread.is_alive():
-             #   object_thread = threading.Thread(target=detect_webcam, args=(frame,))
-              #  object_thread.start()            
-            #frame = detect_webcam(frame)
+            if not object_thread.is_alive():
+                object_thread = threading.Thread(target=detect_webcam_delay, args=(frame,))
+                object_thread.start()            
             frame, steering=lanedetect_steer.lane_finding_pipeline(frame)
             #print(steering)
             car.steer(steering)
@@ -41,7 +40,7 @@ def gen(camera):
 
 
 @app.route('/objects')
-def index():
+def index2():
     return render_template('index2.html') #you can customze index.html here
 
 def gen2(camera):
@@ -59,7 +58,7 @@ def gen2(camera):
 
 
 @app.route('/video_feed2')
-def video_feed():
+def video_feed2():
     return Response(gen2(pi_camera),
                     mimetype='multipart/x-mixed-replace; boundary=frame')
 
