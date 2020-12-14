@@ -29,7 +29,8 @@ class Car():
             pass
         #print("Steering None")    
         else:
-            steeringrate=steeringrate*3
+
+            steeringrate=steeringrate*2
             if steeringrate == 0:
     #            print("input 0")
                 self.steering.ChangeDutyCycle(self.STRAIGHT)    

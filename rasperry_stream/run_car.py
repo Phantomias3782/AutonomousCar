@@ -12,8 +12,14 @@ while True:
     steering=0
     frame = camera.get_frame()
     try:
-        frame2, steering=lanedetect_steer.lane_finding_pipeline(frame)
-    except:
+
+	    frame2, steering=lanedetect_steer.lane_finding_pipeline(frame)
+
+	    print(steering)
+
+    except Exception as e:
+
+       	print(e)
         print("steeringerror")
     car.steer(steering)
     
