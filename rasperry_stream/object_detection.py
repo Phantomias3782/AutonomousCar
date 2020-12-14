@@ -246,21 +246,24 @@ class_list = load_coco_names()
 print("finished loading yolo")
 
 def detect_webcam(frame,tiny=True):
-    # load coco list
-    
-    height, width, channels = frame.shape
+    try:# load coco list
+        
+        height, width, channels = frame.shape
 
-    # preprocess 
-    blob = cv2.dnn.blobFromImage(frame, 1 / 255.0, (320, 320), swapRB=True, crop=False)
-    
-    # detect objects
-    net.setInput(blob)
-    outs = net.forward(output_layers)
+        # preprocess 
+        blob = cv2.dnn.blobFromImage(frame, 1 / 255.0, (320, 320), swapRB=True, crop=False)
+        
+        # detect objects
+        net.setInput(blob)
+        outs = net.forward(output_layers)
 
-    # calculate boxes and 
-    
-    boxes, confidences, class_ids = information_cal(outs, height, width)
+        # calculate boxes and 
+        
+        boxes, confidences, class_ids = information_cal(outs, height, width)
 
-    # draw boxes and classification
-    frame2 = information_draw(boxes, confidences, class_ids, class_list, frame)
+        # draw boxes and classification
+        frame2 = information_draw(boxes, confidences, class_ids, class_list, frame)
+    except:
+        print("Error in det")
+    time.sleep(10)
     return frame2
