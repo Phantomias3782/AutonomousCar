@@ -13,13 +13,12 @@ while True:
     steering=0
     frame = camera.get_frame()
     try:
-
-	    frame2, steering=lanedetect_steer.lane_finding_pipeline(frame)
-        if steering!=None:
+        frame2, steering=lanedetect_steer.lane_finding_pipeline(frame)
+        if steering != None:
             steering_mid+=steering
         else:
             counter-=1
-	    print(steering)
+        print(steering)
 
     except Exception as e:
 
