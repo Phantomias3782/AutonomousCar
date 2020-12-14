@@ -17,7 +17,7 @@ def test(name):
     return "something"
 
 #frame = camera.get_frame()
-object_thread = threading.Thread(target=test, args=(1,))
+object_thread = threading.Thread(target=detect_webcam, args=(1,))
 while True:
     steering=0
     frame = camera.get_frame()
