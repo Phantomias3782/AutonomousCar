@@ -2,10 +2,12 @@ from flask import Flask, render_template, Response, request
 from camera import VideoCamera
 from car_controll import controll_car
 from lane_detection import lanedetect_steer
+from object_detection import detect_webcam
 import cv2
 import time
 import threading
 import os
+
 
 pi_camera = VideoCamera(flip=False) # flip pi camera if upside down.
 car = controll_car.Car()
@@ -22,9 +24,10 @@ def gen(camera):
     while True:
         frame = camera.get_frame()
         try:
-            frame, steering=lanedetect_steer.lane_finding_pipeline(frame)
-            print(steering)
-            car.steer(steering)
+            frame = detect_webcam(frame)
+            #frame, steering=lanedetect_steer.lane_finding_pipeline(frame)
+            #print(steering)
+            #car.steer(steering)
         except Exception as e:
             print("Error in detection")
             print(e)

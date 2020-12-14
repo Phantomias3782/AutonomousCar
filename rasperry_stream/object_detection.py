@@ -89,7 +89,9 @@ def check_reaction(label):
     "if label in speified list send signal"
     print(label)
     # set list
-    check_list = ["person", "car","cell phone"]
+#    check_list = ["person", "car","cell phone","cup","bottle"]
+    
+    check_list = []
 
     if label in check_list:
 
@@ -155,52 +157,41 @@ def calibrate(image, marker_width, marker_distance):
 
     # calculate focalLength
     focalLength = (marker[1][0] * marker_distance) / marker_width
-
     # get distance to marker and print to check 
     distance = round((marker_width * focalLength) / marker[1][0], 2)
     print("marker distance ckeck", distance)
 
 def information_draw(boxes, confidences, class_ids, class_list, img):
-
     # set Non-maximum Suppression and normal threshold
     threshold = 0.5
     nms_threshold = 0.4
     print(confidences)
     indexes = cv2.dnn.NMSBoxes(boxes, confidences, threshold, nms_threshold)
-
     # generate color palette
     colors = np.random.uniform(0, 255, size=(len(class_list), 3))
-
     # set font and other settings
     font = cv2.FONT_HERSHEY_PLAIN
     rec_width = 3
     txt_height = 3
     text_width = 3
-
     for i in range(len(boxes)):
-
         if i in indexes:
-
             x, y, w, h = boxes[i]
             label = str(class_list[class_ids[i]])
             full_label = label + ", " + str(round(confidences[i] * 100, 2))
             color = colors[class_ids[i]]
             cv2.rectangle(img, (x, y), (x + w, y + h), color, rec_width)
             cv2.putText(img, full_label, (x, y -5), font, txt_height, color, text_width)
-
             # send information if specific object in image
             reaction = check_reaction(label)
             if reaction:
-
                 # calculate distance
                 distance = calculate_distance(img, w)
-
                 print("distance to ", label, "is ", distance, "cm")
 
                 # interface to car movement! stop under certain distance to object
 
             else:
-
                 print("No action required")
     
     # return edited image

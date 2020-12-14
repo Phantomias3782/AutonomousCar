@@ -7,8 +7,6 @@ from imutils.video.pivideostream import PiVideoStream
 import imutils
 import time
 import numpy as np
-#from object_detection import detect_webcam
-from lane_detection import lanedetect_steer
 
 class VideoCamera(object):
     def __init__(self, flip = False):
