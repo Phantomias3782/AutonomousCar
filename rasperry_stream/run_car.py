@@ -14,6 +14,7 @@ while True:
     frame = camera.get_frame()
     try:
         frame2, steering=lanedetect_steer.lane_finding_pipeline(frame)
+        car.steer(steering)
         if steering != None:
             steering_mid+=steering
         else:
@@ -24,8 +25,16 @@ while True:
 
        	print(e)
         print("steeringerror")
-    if counter%5==0:
-        car.steer(steering_mid/5)
-        steering_mid=0
+
+
+#    if counter%50==0:
+
+     #car.steer(steering)
+#        steering_mid=0
     counter+=1
+#    time.sleep(0.0125)
+
+
+
+
     
