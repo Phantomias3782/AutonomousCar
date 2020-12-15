@@ -141,8 +141,8 @@ def steer(image, left_line, right_line):
         #cv2.line(image, (x1,y1), (x2,y2), color = (0, 0, 255), thickness = 10)
 
         steering = (x2 - x1) /100
-#        print('image'+str(img_x)+' - '+str(img_y))
- #       print('slope_l : '+str(slope_l)+' slope_r: '+str(slope_r)+' slope_middle: '+str(x1)+' img_middle: '+str(x2)+' steering: '+str(steering))
+    #        print('image'+str(img_x)+' - '+str(img_y))
+    #       print('slope_l : '+str(slope_l)+' slope_r: '+str(slope_r)+' slope_middle: '+str(x1)+' img_middle: '+str(x2)+' steering: '+str(steering))
 
         return steering
 
@@ -205,10 +205,9 @@ def get_vertices(image, scope):
     if scope == 'border':
         rows, cols = image.shape[:2]
         bottom_left  = [cols*-0.2, rows]
-
-        top_left     = [cols*0.1, rows*0.5]
+        top_left     = [cols*0.1, rows*0.4]
         bottom_right = [cols*1.2, rows]
-        top_right    = [cols*0.9, rows*0.5] 
+        top_right    = [cols*0.9, rows*0.4] 
 
         ver = np.array([[bottom_left, top_left, top_right, bottom_right]], dtype=np.int32)
         return ver
