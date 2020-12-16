@@ -6,3 +6,5 @@ imutils
 scipy
 keras
 tensorflow
+threading
+logging
