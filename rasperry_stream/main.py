@@ -24,14 +24,12 @@ def gen(camera):
     while True:
         frame = camera.get_frame()
         try:
-
-#            if not object_thread.is_alive():
-
-#                object_thread = threading.Thread(target=detect_webcam_delay, args=(frame,))
-#                object_thread.start()            
+            if not object_thread.is_alive():
+                object_thread = threading.Thread(target=detect_webcam_delay, args=(frame,))
+                object_thread.start()            
             frame, steering=lanedetect_steer.lane_finding_pipeline(frame)
-            #print(steering)
             car.steer(steering)
+            time.sleep(0.0125)
         except Exception as e:
             print("Error in detection")
             print(e)

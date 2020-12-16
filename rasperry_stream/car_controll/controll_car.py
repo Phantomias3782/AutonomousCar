@@ -68,7 +68,7 @@ class Car():
 
 car = Car()
 car.steer(0)
-time.sleep(2)
+time.sleep(1)
 
 
 '''
