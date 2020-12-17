@@ -23,6 +23,10 @@ def detect(frame):
     # ret = camera.set(3,IM_WIDTH)
     # ret = camera.set(4,IM_HEIGHT)
     
+    IM_WIDTH = 640
+    IM_HEIGHT = 480
+    input = cv2.resize(frame, (IM_WIDTH,IM_HEIGHT))
+    
     font = cv2.FONT_HERSHEY_SIMPLEX
     bottomLeftCornerOfText = (10,IM_HEIGHT-10)
     fontScale = 1
@@ -68,10 +72,6 @@ def detect(frame):
     # ret, img = camera.read()
     input = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)  # convert to RGB color space
     img_pil = Image.fromarray(input)
-    
-    # IM_WIDTH = 640
-    # IM_HEIGHT = 480
-    # input = cv2.resize(input, (width,height))
     
     # results = engine.DetectWithImage(img_pil, threshold=min_confidence, keep_aspect_ratio=True,
     #                     relative_coord=False, top_k=5)
