@@ -10,7 +10,7 @@ import OD2
 camera = VideoCamera(flip=False) # flip pi camera if upside down.
 car = controll_car.Car()
 #object_thread = threading.Thread(target=detect_webcam_delay, args=(1,))
-object_thread = threading.Thread(target=OD.detect, args=(1,))
+object_thread = threading.Thread(target=OD2.detect, args=(1,))
 while True:
     frame = camera.get_frame()
     try:

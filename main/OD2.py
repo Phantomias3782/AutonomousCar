@@ -6,6 +6,7 @@ import numpy
 import os
 import numpy as np
 import cv2
+import tensorflow as tf
 
 json_file = open('model.json', 'r')
 loaded_model_json = json_file.read()
@@ -14,7 +15,9 @@ loaded_model = model_from_json(loaded_model_json)
 # load weights into new model
 loaded_model.load_weights("model.h5")
 print("Loaded model from disk")
- 
+global graph
+graph = tf.get_default_graph() 
+
 # evaluate loaded model on test data
 loaded_model.compile(loss='categorical_crossentropy', optimizer=optimizers.RMSprop(lr=1e-4), metrics=['accuracy'])
 # img = cv2.resize(cv2.imread("test.jpg"),(150,150))
@@ -29,5 +32,6 @@ loaded_model.compile(loss='categorical_crossentropy', optimizer=optimizers.RMSpr
 def detect(frame):
     frame = cv2.resize(frame,(150,150))
     frame = frame.reshape((1,) + frame.shape)
-    pred = loaded_model.predict(img)
+    with graph.as_default():
+        pred = loaded_model.predict(img)
     print(pred)
