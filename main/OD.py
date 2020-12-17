@@ -6,15 +6,15 @@ import numpy as np
 import os
 import datetime
 
-import edgetpu.detection.engine
+#import edgetpu.detection.engine
 import cv2
 from PIL import Image
 
 def detect(frame):
-    args.model = './mobilenet_ssd_v2_coco_quant_postprocess_edgetpu.tflite'
-    args.label = './labels.txt'
+    model = './mobilenet_ssd_v2_coco_quant_postprocess_edgetpu.tflite'
+    label = './labels.txt'
 
-    with open(args.label, 'r') as f:
+    with open(label, 'r') as f:
         pairs = (l.strip().split(maxsplit=1) for l in f.readlines())
         labels = dict((int(k), v) for k, v in pairs)
 
@@ -37,12 +37,12 @@ def detect(frame):
     min_confidence = 0.20
     
     # initial classification engine
-    engine = edgetpu.detection.engine.DetectionEngine(args.model)
+    #engine = edgetpu.detection.engine.DetectionEngine(args.model)
 
     import numpy as np
     import tensorflow as tf
 
-    interpreter = tf.lite.Interpreter(model_path=args.model)
+    interpreter = tf.lite.Interpreter(model_path=model)
     # interpreter.allocate_tensors()
 
     # # Get input and output tensors.
