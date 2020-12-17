@@ -47,12 +47,9 @@ def detect(frame):
     import tensorflow as tf
 
     interpreter = tf.lite.Interpreter(model_path=model)
-    # interpreter.allocate_tensors()
-
-    # # Get input and output tensors.
-    # input_details = interpreter.get_input_details()
-    # output_details = interpreter.get_output_details()
-
+    interpreter.allocate_tensors()
+	input_details = interpreter.get_input_details()
+	output_details = interpreter.get_output_details()
     # # Test model on random input data.
     # input_shape = input_details[0]['shape']
     # input_data = np.array(np.random.random_sample(input_shape), dtype=np.float32)
@@ -75,24 +72,28 @@ def detect(frame):
     
     # results = engine.DetectWithImage(img_pil, threshold=min_confidence, keep_aspect_ratio=True,
     #                     relative_coord=False, top_k=5)
-    results = interpreter.DetectWithImage(img_pil, threshold=min_confidence, keep_aspect_ratio=True,
-                         relative_coord=False, top_k=5)
+    interpreter.set_tensor(input_details[0]['index'], frame)
+    # run
+    interpreter.invoke()
 
-    if results :
-        for obj in results:
-            print("%s, %.0f%% %s %.2fms" % (labels[obj.label_id], obj.score *100, obj.bounding_box, elapsed_tf_ms * 1000))
-            box = obj.bounding_box
-            coord_top_left = (int(box[0][0]), int(box[0][1]))
-            coord_bottom_right = (int(box[1][0]), int(box[1][1]))
-            cv2.rectangle(img, coord_top_left, coord_bottom_right, boxColor, boxLineWidth)
-            annotate_text = "%s, %.0f%%" % (labels[obj.label_id], obj.score * 100)
-            coord_top_left = (coord_top_left[0],coord_top_left[1]+15)
-            cv2.putText(img, annotate_text, coord_top_left, font, fontScale, boxColor, lineType )
-        print('------')
-    else:
-        print('No object detected')
+    for i in output_details:
+        print(interpreter.get_tensor(output_details[i]['index']))
 
-    cv2.putText(frame, annotate_text, bottomLeftCornerOfText, font, fontScale, fontColor, lineType)
+    # if results :
+    #     for obj in results:
+    #         print("%s, %.0f%% %s %.2fms" % (labels[obj.label_id], obj.score *100, obj.bounding_box, elapsed_tf_ms * 1000))
+    #         box = obj.bounding_box
+    #         coord_top_left = (int(box[0][0]), int(box[0][1]))
+    #         coord_bottom_right = (int(box[1][0]), int(box[1][1]))
+    #         cv2.rectangle(frame, coord_top_left, coord_bottom_right, boxColor, boxLineWidth)
+    #         annotate_text = "%s, %.0f%%" % (labels[obj.label_id], obj.score * 100)
+    #         coord_top_left = (coord_top_left[0],coord_top_left[1]+15)
+    #         cv2.putText(frame, annotate_text, coord_top_left, font, fontScale, boxColor, lineType )
+    #     print('------')
+    # else:
+    #     print('No object detected')
+
+    # cv2.putText(frame, annotate_text, bottomLeftCornerOfText, font, fontScale, fontColor, lineType)
     # out.write(img)
 
     return frame
