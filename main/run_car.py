@@ -8,6 +8,7 @@ from object_detection import detect_webcam,detect_webcam_delay
 
 camera = VideoCamera(flip=False) # flip pi camera if upside down.
 car = controll_car.Car()
+object_thread = threading.Thread(target=detect_webcam_delay, args=(1,))
 while True:
     frame = camera.get_frame()
     try:
