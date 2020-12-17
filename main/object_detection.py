@@ -269,5 +269,5 @@ def detect_webcam(frame,tiny=True):
 
 def detect_webcam_delay(frame,tiny=True):
     frame = detect_webcam(frame,tiny)
-    time.sleep(1)
+    time.sleep(10)
     return frame
