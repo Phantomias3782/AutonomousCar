@@ -75,7 +75,7 @@ def detect(frame):
     
     # results = engine.DetectWithImage(img_pil, threshold=min_confidence, keep_aspect_ratio=True,
     #                     relative_coord=False, top_k=5)
-    results = DetectWithImage(img_pil, threshold=min_confidence, keep_aspect_ratio=True,
+    results = interpreter.DetectWithImage(img_pil, threshold=min_confidence, keep_aspect_ratio=True,
                          relative_coord=False, top_k=5)
 
     if results :
