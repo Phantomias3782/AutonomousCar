@@ -45,6 +45,7 @@ def detect(frame):
 
     import numpy as np
     import tensorflow as tf
+    from tflite_runtime.interpreter import load_delegate
     interpreter = tf.lite.Interpreter(model_path=model, experimental_delegates=[tf.lite.Interpreter.load_delegate('libedgetpu.so.1.0')])
     interpreter.allocate_tensors()
     input_details = interpreter.get_input_details()
