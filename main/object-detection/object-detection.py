@@ -20,8 +20,22 @@ def load_coco_names():
     # return list of classes
     return class_list
 
+def load_custom_names():
+    "load names of custom text file"
 
-def load_yolo(tiny = True):
+    # create epmty list
+    class_list = []
+
+    # open coco txt file
+    with open("custom.names", "r") as f:
+
+        class_list = [line.strip() for line in f.readlines()]
+    
+    # return list of classes
+    return class_list
+
+
+def load_yolo(tiny = True, custom = False):
     "load yolo network. option to load tiny or normal one."
 
     print("started loading yolov3...")
@@ -34,6 +48,10 @@ def load_yolo(tiny = True):
     else:
 
         net = cv2.dnn.readNet("yolov3.weights", "yolov3.cfg")
+    
+    if custom:
+
+        net = cv2.dnn.readNet("yolov3-tiny-custom.weights", "yolov3-tiny-custom.cfg")
 
     # extract single layers of network
     layer_names = net.getLayerNames()
