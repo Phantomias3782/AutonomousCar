@@ -250,7 +250,7 @@ def lane_finding_pipeline(image):
     # Change Brightness and Contrast to avoid misclassification caused by ground
     bc_img = brightness_contrast(Input_img = gray_img, contrast = 2, brightness = 0.004)
     # Gaussian Smoothing to get clearness of lines (especialy at noisy grounds like our parklot test ground)
-    smoothed_img = gaussian_blur(img = bc_img, kernel_size = 9)    
+    smoothed_img = gaussian_blur(img = bc_img, kernel_size = 13)    
     
     #Canny Edge Detection
 
@@ -274,13 +274,11 @@ def lane_finding_pipeline(image):
     # add layer with slope lines to original input image
     output = weighted_img(img = slope_weighted_img, initial_img = image, α=0.8, β=1., γ=0.)
     # mask the output image again for better interpretation of results
-    #output = region_of_interest(img = output, vertices = get_vertices(image, 'border'), vertices_car = get_vertices(image, 'car'))
+    canny_mask = region_of_interest(img = canny_img, vertices = get_vertices(image, 'border'), vertices_car = get_vertices(image, 'car'))
     # compute steering advice for car
     steering = steer(image, left_line, right_line)
 
-#    output = canny_img
-
-    return output, steering
+    return output, canny_mask
 
 
 ################################################################################################
@@ -289,19 +287,20 @@ def lane_finding_pipeline(image):
 
 # os.chdir('/Users/Syman/Documents/Studij/Semester05/Seminar/AutonomousCar/')
 # image = mpimg.imread('./first_outdoor/park1.jpg')
+# picture, canny = lane_finding_pipeline(image)
+
 
 # # plot input image
 # fig = plt.figure(figsize=(20, 10),num='TEST')
 # ax = fig.add_subplot(1, 2, 1,xticks=[], yticks=[])
-# plt.imshow(image)
-# ax.set_title("Input Image")
+# plt.imshow(canny)
+# ax.set_title("canny transformation")
 # ax = fig.add_subplot(1, 2, 2,xticks=[], yticks=[])
 
-# picture, steering = lane_finding_pipeline(image)
 # #plt.imshow(picture)
 # plt.imshow(picture, cmap='gray')
 # # plot also processed image
-# ax.set_title(f"Output Image [Steering: {steering}]") 
+# ax.set_title("Output Image") 
 # #plt.savefig('first_outdoor/gray_test/w1h33.png')
 # plt.show()
 
