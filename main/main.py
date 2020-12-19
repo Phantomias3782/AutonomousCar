@@ -7,13 +7,17 @@ import cv2
 import time
 import threading
 import os
-
+from datetime import datetime
 
 pi_camera = VideoCamera(flip=False) # flip pi camera if upside down.
 car = controll_car.Car()
 
 # App Globals (do not edit)
 app = Flask(__name__)
+
+def save_frames(frame):
+    now = datetime.now()    
+    cv2.imwrite(str(now)+".jpg",frame)
 
 @app.route('/')
 def index():
@@ -24,6 +28,9 @@ def gen(camera):
     while True:
         frame = camera.get_frame()
         try:
+           if not object_thread.is_alive():
+               object_thread = threading.Thread(target=detect_webcam_delay, args=(frame,))
+                object_thread.start()            
            # if not object_thread.is_alive():
             #    object_thread = threading.Thread(target=detect_webcam_delay, args=(frame,))
              #s   object_thread.start()            
