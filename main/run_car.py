@@ -13,17 +13,19 @@ car = controll_car.Car()
 #   object_thread = threading.Thread(target=OD2.detect, args=(1,))
 while True:
     frame = camera.get_frame()
-    try:
+    #
+    # try:
         # if not object_thread.is_alive():
         #     print("objectdetection started")
         #     # object_thread = threading.Thread(target=detect_webcam_delay, args=(frame,))
         #     object_thread = threading.Thread(target=OD2.detect, args=(frame,))
         #     object_thread.start()
-        frame2, steering=lanedetect_steer.lane_finding_pipeline(frame)
-        car.steer(steering)
+    frame2, steering=lanedetect_steer.lane_finding_pipeline(frame)
+    car.steer(steering)
         #print(steering)
 
-    except Exception as e:
-       	pass
+    #except Exception as e:
+     
+     #  	pass
         #print(e)
         #print("steeringerror")
