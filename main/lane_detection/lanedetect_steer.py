@@ -1,5 +1,4 @@
 import os
-#os.chdir('/Users/Syman/Documents/Studij/Semester05/Seminar/AutonomousCar/lane_detection')
 
 # Do all the relevant imports
 import matplotlib.pyplot as plt
@@ -8,6 +7,9 @@ import numpy as np
 import cv2
 import math
 
+from PIL import Image, ImageEnhance
+
+
 def grayscale(img):
     """Applies the Grayscale transform
     This will return an image with only one color channel
@@ -15,8 +17,6 @@ def grayscale(img):
     (assuming your grayscaled image is called 'gray')
     you should call plt.imshow(gray, cmap='gray')"""
     return cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
-    # Or use BGR2GRAY if you read an image with cv2.imread()
-    #return cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     
 def canny(img, low_threshold, high_threshold):
     """Applies the Canny transform"""
@@ -25,6 +25,22 @@ def canny(img, low_threshold, high_threshold):
 def gaussian_blur(img, kernel_size):
     """Applies a Gaussian Noise kernel"""
     return cv2.GaussianBlur(img, (kernel_size, kernel_size), 0)
+
+def brightness_contrast(Input_img, contrast, brightness):
+    # change Image from np.array to PIL.Image
+    img = Image.fromarray(Input_img)
+
+    # Contrast
+    enhancer = ImageEnhance.Contrast(img)
+    contrast_img = enhancer.enhance(contrast)
+    # Brightness
+    enhancer = ImageEnhance.Brightness(contrast_img)
+    brightness_img = enhancer.enhance(brightness)
+    
+    # change PIL.Image back to np.array
+    img = np.array(brightness_img)
+
+    return img
 
 def region_of_interest(img, vertices, vertices_car):
     """
@@ -229,24 +245,38 @@ def get_vertices(image, scope):
 # Lane finding Pipeline
 def lane_finding_pipeline(image):
     
-    #Grayscale
+    # Grayscale for easier computation
     gray_img = grayscale(image)
-    #Gaussian Smoothing
-    smoothed_img = gaussian_blur(img = gray_img, kernel_size = 5)
+    # Change Brightness and Contrast to avoid misclassification caused by ground
+    bc_img = brightness_contrast(Input_img = gray_img, contrast = 2, brightness = 0.004)
+    # Gaussian Smoothing to get clearness of lines (especialy at noisy grounds like our parklot test ground)
+    smoothed_img = gaussian_blur(img = bc_img, kernel_size = 33)    
+    
     #Canny Edge Detection
-    canny_img = canny(img = smoothed_img, low_threshold = 50, high_threshold = 150)
-    #Masked Image Within a Polygon
+
+    # Calculate good threshold
+    med_val = np.median(smoothed_img) 
+    lower = int(max(0 ,0.7*med_val))
+    upper = int(min(255,1.3*med_val))
+    #print('lower: '+str(lower))
+    #print('upper: '+ str(upper))
+    # perform canny edge detection
+    canny_img = canny(img = smoothed_img, low_threshold = lower, high_threshold = upper)
+
+    # Mask Image Within a Polygon for each environment and car
     masked_img = region_of_interest(img = canny_img, vertices = get_vertices(image, 'border'), vertices_car = get_vertices(image, 'car'))
-    #Hough Transform Lines
+    # Hough Transform Lines
     lines, line_img = hough_lines(img = masked_img, rho = 1, theta = np.pi/180, threshold = 20, min_line_len = 20, max_line_gap = 180)
     # draw left and right line
     left_line, right_line = slope_lines(line_img, lines)
     # draw slope between two lines
     slope_weighted_img = slope(line_img, left_line, right_line)
-    #Draw lines on edges
+    # add layer with slope lines to original input image
     output = weighted_img(img = slope_weighted_img, initial_img = image, α=0.8, β=1., γ=0.)
-    output = region_of_interest(img = output, vertices = get_vertices(image, 'border'), vertices_car = get_vertices(image, 'car'))
+    # mask the output image again for better interpretation of results
+    #output = region_of_interest(img = output, vertices = get_vertices(image, 'border'), vertices_car = get_vertices(image, 'car'))
 
+    # compute steering advice for car
     steering = steer(image, left_line, right_line)
 
     return output, steering
@@ -256,8 +286,8 @@ def lane_finding_pipeline(image):
 ################################          call for test         ################################
 ################################################################################################
 
-
-# image = mpimg.imread(f'./Flat_adjusted/Flat_adjusted_09.jpg')
+# os.chdir('/Users/Syman/Documents/Studij/Semester05/Seminar/AutonomousCar/')
+# image = mpimg.imread('./first_outdoor/park1.jpg')
 
 # # plot input image
 # fig = plt.figure(figsize=(20, 10),num='TEST')
@@ -266,11 +296,14 @@ def lane_finding_pipeline(image):
 # ax.set_title("Input Image")
 # ax = fig.add_subplot(1, 2, 2,xticks=[], yticks=[])
 
-# picture = lane_finding_pipeline(image)
-# plt.imshow(picture)
-
+# picture, steering = lane_finding_pipeline(image)
+# #plt.imshow(picture)
+# plt.imshow(picture, cmap='gray')
 # # plot also processed image
-# ax.set_title("Output Image [Lane Line Detected]") 
+# ax.set_title(f"Output Image [Steering: {steering}]") 
+# #plt.savefig('first_outdoor/gray_test/w1h33.png')
 # plt.show()
+
+
 
   
