@@ -38,7 +38,7 @@ def gen(camera):
             
             frame, steering=lanedetect_steer.lane_finding_pipeline(frame)
             car.steer(steering)
-            time.sleep(0.0125)
+           # time.sleep(0.0125)
         except Exception as e:
             print("Error in detection")
             print(e)

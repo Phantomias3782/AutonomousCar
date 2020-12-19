@@ -250,7 +250,7 @@ def lane_finding_pipeline(image):
     # Change Brightness and Contrast to avoid misclassification caused by ground
     bc_img = brightness_contrast(Input_img = gray_img, contrast = 2, brightness = 0.004)
     # Gaussian Smoothing to get clearness of lines (especialy at noisy grounds like our parklot test ground)
-    smoothed_img = gaussian_blur(img = bc_img, kernel_size = 33)    
+    smoothed_img = gaussian_blur(img = bc_img, kernel_size = 9)    
     
     #Canny Edge Detection
 
@@ -278,7 +278,7 @@ def lane_finding_pipeline(image):
     # compute steering advice for car
     steering = steer(image, left_line, right_line)
 
-    output = canny_img
+#    output = canny_img
 
     return output, steering
 
