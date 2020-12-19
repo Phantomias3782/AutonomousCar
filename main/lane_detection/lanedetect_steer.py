@@ -275,9 +275,10 @@ def lane_finding_pipeline(image):
     output = weighted_img(img = slope_weighted_img, initial_img = image, α=0.8, β=1., γ=0.)
     # mask the output image again for better interpretation of results
     #output = region_of_interest(img = output, vertices = get_vertices(image, 'border'), vertices_car = get_vertices(image, 'car'))
-
     # compute steering advice for car
     steering = steer(image, left_line, right_line)
+
+    output = canny_img
 
     return output, steering
 
