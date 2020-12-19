@@ -17,23 +17,25 @@ app = Flask(__name__)
 
 def save_frames(frame):
     now = datetime.now()    
-    cv2.imwrite(str(now)+".jpg",frame)
-
+    cv2.imwrite("./pics/"+str(now)+".jpg",frame)
+    time.sleep(3)
+    
 @app.route('/')
 def index():
     return render_template('index.html') #you can customze index.html here
 
 def gen(camera):
-#    object_thread = threading.Thread(target=detect_webcam_delay, args=(1,))
+    save_frames_thread = threading.Thread(target=save_frames, args=(1,))
     while True:
         frame = camera.get_frame()
         try:
-           if not object_thread.is_alive():
-               object_thread = threading.Thread(target=detect_webcam_delay, args=(frame,))
-                object_thread.start()            
+            if not save_frames_thread.is_alive():
+                save_frames_thread = threading.Thread(target=save_frames, args=(frame,))
+                save_frames_thread.start()
            # if not object_thread.is_alive():
             #    object_thread = threading.Thread(target=detect_webcam_delay, args=(frame,))
              #s   object_thread.start()            
+            
             frame, steering=lanedetect_steer.lane_finding_pipeline(frame)
             car.steer(steering)
             time.sleep(0.0125)
