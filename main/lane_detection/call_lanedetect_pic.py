@@ -1,5 +1,5 @@
 import os
-os.chdir('/Users/Syman/Documents/Studij/Semester05/Seminar/AutonomousCar/main/pics')
+os.chdir('/Users/Syman/Documents/Studij/Semester05/Seminar/AutonomousCar/main/test-images2')
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 import lanedetect_steer
@@ -11,7 +11,7 @@ for image_path in list(os.listdir('./')):
     print(image_path)
 
     try:
-        picture, canny = lanedetect_steer.lane_finding_pipeline(image)
+        picture, canny, steering = lanedetect_steer.lane_finding_pipeline(image)
     except Exception:
         print("Inputdaten Fehler")
         continue
@@ -27,7 +27,7 @@ for image_path in list(os.listdir('./')):
     plt.imshow(picture)
 
     # plot also processed image
-    ax.set_title(f"Output Image") 
+    ax.set_title(f"Output Image - Steering: {steering}") 
     plt.show()
 
     if 0xFF == ord('q'):
