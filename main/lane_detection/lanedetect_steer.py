@@ -224,7 +224,7 @@ def steer(image, left_line, right_line):
 
 # Lane finding Pipeline
 def lane_finding_pipeline(image):
-    
+
     # Grayscale for easier computation
     gray_img = grayscale(image)
     # Change Brightness and Contrast to avoid misclassification caused by ground
