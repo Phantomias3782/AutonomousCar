@@ -222,8 +222,50 @@ def steer(image, left_line, right_line):
 ################################         calling pipeline       ################################
 ################################################################################################
 
-# Lane finding Pipeline
-def lane_finding_pipeline(image):
+def lane_detection(image, location='outdoor'):
+    print('lane detection function input type: ' + str(type(image)))
+    if location == 'outdoor':
+        picture, canny, steering = lane_finding_pipeline_outdoor(image)
+    elif location =='indoor':
+        picture, canny, steering = lane_finding_pipeline_indoor(image)
+
+    return picture, canny, steering
+
+# Lane finding Pipeline indoor
+def lane_finding_pipeline_indoor(image):
+
+    #Grayscale
+    gray_img = grayscale(image)
+    #Gaussian Smoothing
+    smoothed_img = gaussian_blur(img = gray_img, kernel_size = 3)
+    
+    # Canny Edge Detection
+    # Calculate good threshold
+    med_val = np.median(smoothed_img) 
+    lower = int(max(0 ,0.7*med_val))
+    upper = int(min(255,1.3*med_val))
+    # perform canny edge detection
+    canny_img = canny(img = smoothed_img, low_threshold = lower, high_threshold = upper)
+
+    # Mask Image Within a Polygon for each environment and car
+    masked_img = region_of_interest(img = canny_img, vertices = get_vertices(image, 'border'), vertices_car = get_vertices(image, 'car'))
+    # Hough Transform Lines
+    lines, line_img = hough_lines(img = masked_img, rho = 1, theta = np.pi/180, threshold = 20, min_line_len = 20, max_line_gap = 180)
+    # draw left and right line
+    left_line, right_line = slope_lines(line_img, lines)
+    # draw slope between two lines
+    slope_weighted_img = slope(line_img, left_line, right_line)
+    # add layer with slope lines to original input image
+    output = weighted_img(img = slope_weighted_img, initial_img = image, α=0.8, β=1., γ=0.)
+    # mask the output image again for better interpretation of results
+    canny_mask = region_of_interest(img = canny_img, vertices = get_vertices(image, 'border'), vertices_car = get_vertices(image, 'car'))
+    # compute steering advice for car
+    steering = steer(image, left_line, right_line)
+
+    return output, canny_mask, steering
+
+# Lane finding Pipeline outdoor
+def lane_finding_pipeline_outdoor(image):
 
     # Grayscale for easier computation
     gray_img = grayscale(image)
@@ -265,10 +307,11 @@ def lane_finding_pipeline(image):
 ################################          call for test         ################################
 ################################################################################################
 
-# os.chdir('/Users/Syman/Documents/Studij/Semester05/Seminar/AutonomousCar/main/pics')
-# image = mpimg.imread('./2020-12-19 14:55:15.770460.jpg')
+# os.chdir('/Users/Syman/Documents/Studij/Semester05/Seminar/AutonomousCar/main/lane_detection/lane_detection_data/indoor/')
+# image = mpimg.imread('pic.jpg')
 
-# picture, canny, steering = lane_finding_pipeline(image)
+# location = 'indoor'
+# picture, canny, steering = lane_detection(image, location)
 
 
 # # plot input image
