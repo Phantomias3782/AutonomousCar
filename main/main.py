@@ -25,20 +25,20 @@ def index():
     return render_template('index.html') #you can customze index.html here
 
 def gen(camera):
-    save_frames_thread = threading.Thread(target=save_frames, args=(1,))
+    #save_frames_thread = threading.Thread(target=save_frames, args=(1,))
     while True:
         frame = camera.get_frame()
         try:
-            if not save_frames_thread.is_alive():
-                save_frames_thread = threading.Thread(target=save_frames, args=(frame,))
-                save_frames_thread.start()
+     #       if not save_frames_thread.is_alive():
+      #          save_frames_thread = threading.Thread(target=save_frames, args=(frame,))
+       #         save_frames_thread.start()
            # if not object_thread.is_alive():
             #    object_thread = threading.Thread(target=detect_webcam_delay, args=(frame,))
              #s   object_thread.start()            
             
-            frame, steering=lanedetect_steer.lane_finding_pipeline(frame)
+            frame, canny, steering=lanedetect_steer.lane_detection(frame,"indoor")
             car.steer(steering)
-           # time.sleep(0.0125)
+            time.sleep(0.0125)
         except Exception as e:
             print("Error in detection")
             print(e)

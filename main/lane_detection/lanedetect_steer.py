@@ -203,10 +203,9 @@ def steer(image, left_line, right_line):
     slope_with = (slope_r - slope_l)
     x1 = int( ( slope_with / 2) + slope_l )
     x2 = int(img_x/2)
-
-    if slope_with < 100:
+    if slope_with <100:
         print(slope_with)
-    if slope_with <85:
+    if slope_with <85: 
         return None
     else:
 
@@ -223,7 +222,7 @@ def steer(image, left_line, right_line):
 ################################################################################################
 
 def lane_detection(image, location='outdoor'):
-    print('lane detection function input type: ' + str(type(image)))
+    #print('lane detection function input type: ' + str(type(image)))
     if location == 'outdoor':
         picture, canny, steering = lane_finding_pipeline_outdoor(image)
     elif location =='indoor':
