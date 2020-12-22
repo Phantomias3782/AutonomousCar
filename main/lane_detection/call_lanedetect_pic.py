@@ -5,7 +5,7 @@ import matplotlib.image as mpimg
 import lanedetect_steer
 import cv2
 
-location = 'indoor'
+location = 'outdoor'
 
 for image_path in list(os.listdir(f'./lane_detection_data/{location}')):
     image = mpimg.imread(f'./lane_detection_data/{location}/{image_path}')
