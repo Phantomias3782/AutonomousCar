@@ -13,19 +13,24 @@ class Car():
 
         self.steering =IO.PWM(35,50)
         self.steering.start(0)
-        '''
-        #define max values 250hz
-        self.FULL_LEFT=39#44
-        self.STRAIGHT=32.5
-        self.FULL_RIGHT=25#19
-        '''
-        #200HZ
+        
+        self.throttle =IO.PWM(35,50)
+        self.throttle.start(0)
+        
+        #steering config
         self.FULL_LEFT=10#44
         self.STRAIGHT=8
         self.FULL_RIGHT=6#19
         self.LEFT=self.FULL_LEFT-self.STRAIGHT
         self.RIGHT=self.STRAIGHT-self.FULL_RIGHT
-        #set steering dutycycle to 0
+
+        #throttle config
+        self.still = 0 
+        self.forward = 0
+        self.brake = 0
+        self.current_throttle = 0
+
+
         
 
     def __del__(self):
@@ -66,6 +71,19 @@ class Car():
 #        time.sleep(0.5)
  #       self.steering.ChangeDutyCycle(0)
 
+    def throttle(self,throttlerate):
+            if self.throttle != throttlerate:
+                if throttlerate == 0:
+                    self.throttle = 0
+                    self.steering.ChangeDutyCycle(self.still)    
+                elif throttlerate > 0:
+                    self.throttle = 1
+                    self.steering.ChangeDutyCycle(fwd)
+                elif throttlerate < 0:
+                    self.throttle = -1
+                    self.steering.ChangeDutyCycle(brake)
+
+
 car = Car()
 car.steer(0)
 time.sleep(1)
@@ -79,7 +97,4 @@ time.sleep(1)
 car.steer(0)
 time.sleep(1)
 '''
-
-
-
 car.steering.stop()

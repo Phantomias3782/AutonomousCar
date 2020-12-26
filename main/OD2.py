@@ -45,4 +45,8 @@ def detect(frame):
     with graph.as_default():
         set_session(sess)
         pred = loaded_model.predict(frame)
-    print(pred)
+    
+    if pred[0] > pred[1]
+        return None
+    print("STOP!")
+    return "STOP!"
