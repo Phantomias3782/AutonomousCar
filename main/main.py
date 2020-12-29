@@ -56,7 +56,7 @@ def gen2(camera):
     while True:
         frame = camera.get_frame()
         try:            
-            frame = object_detection.detect_webcam(frame)
+            frame = object_detection.detect_raspberry_cam(frame)
         except Exception as e:
             print("Error in detection")
             print(e)

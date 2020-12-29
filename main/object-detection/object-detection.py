@@ -335,10 +335,11 @@ def detect_webcam(tiny=True, custom = True):
             
     video_capture.release()
 
-def detect_raspberry_cam(frame, output_layers, net, class_list):
+class_list = load_custom_names()
+output_layers, net = load_yolo(tiny=tiny, custom = custom)
+def detect_raspberry_cam(frame):
 
     try:
-        
         height, width, channels = frame.shape
 
         # preprocess 
