@@ -14,8 +14,9 @@ class Car():
         self.steering =IO.PWM(35,50)
         self.steering.start(0)
         
-        self.throttle =IO.PWM(35,50)
-        self.throttle.start(0)
+
+#        self.throttle =IO.PWM(37,50)
+#        self.throttle.start(0)
         
         #steering config
         self.FULL_LEFT=10#44
