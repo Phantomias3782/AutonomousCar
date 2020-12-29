@@ -32,6 +32,7 @@ def load_custom_names():
         class_list = [line.strip() for line in f.readlines()]
     
     # return list of classes
+    print("Loaded custom names")
     return class_list
 
 
@@ -46,12 +47,13 @@ def load_yolo(tiny = True, custom = False):
         net = cv2.dnn.readNet("yolov3-tiny.weights", "yolov3-tiny.cfg")
     
     else:
-
+        
         net = cv2.dnn.readNet("yolov3.weights", "yolov3.cfg")
     
     if custom:
 
         net = cv2.dnn.readNet("yolov3-tiny-custom.weights", "yolov3-tiny-custom.cfg")
+        print("Loaded custom yolo")
 
     # extract single layers of network
     layer_names = net.getLayerNames()
@@ -82,6 +84,7 @@ def information_cal(outs, height, width):
             class_id = np.argmax(scores)
             confidence = scores[class_id]
 
+
             # check if object is detected about given confidence
             if confidence > confidence_treshold:
 
@@ -107,7 +110,7 @@ def check_reaction(label):
     "if label in speified list send signal"
 
     # set list
-    check_list = ["person", "car"]
+    check_list = ["person", "car", "PlaymoPerson"]
 
     if label in check_list:
 
@@ -166,7 +169,7 @@ def calibrate(image, marker_width, marker_distance):
     marker = cv2.minAreaRect(c)
 
     # check edged image
-    # cv2.imwrite("gray_test.jpg", edged)
+    cv2.imwrite("gray_test.jpg", edged)
     
     # make global (db for one variable is oversized)
     global focalLength
@@ -178,7 +181,7 @@ def calibrate(image, marker_width, marker_distance):
     distance = round((marker_width * focalLength) / marker[1][0], 2)
     print("marker distance ckeck", distance)
 
-def information_draw(boxes, confidences, class_ids,colors, class_list, img):
+def information_draw(boxes, confidences, class_ids, colors, class_list, img):
     
     # set Non-maximum Suppression and normal threshold
     threshold = 0.5
@@ -189,9 +192,9 @@ def information_draw(boxes, confidences, class_ids,colors, class_list, img):
     
     # set font and other settings
     font = cv2.FONT_HERSHEY_PLAIN
-    rec_width = 3
-    txt_height = 3
-    text_width = 3
+    rec_width = 1
+    txt_height = 1
+    text_width = 1
 
     for i in range(len(boxes)):
 
@@ -223,9 +226,7 @@ def information_draw(boxes, confidences, class_ids,colors, class_list, img):
     # return edited image
     return img
 
-def detect_image(image_path, tiny=True):
-    # generate color palette
-    colors = np.random.uniform(0, 255, size=(len(class_list), 3))
+def detect_image(image_path, tiny=True, custom = True):
 
     # set figure
     fig = plt.figure(figsize=(20, 10))
@@ -245,10 +246,18 @@ def detect_image(image_path, tiny=True):
     blob = cv2.dnn.blobFromImage(img_original, 1 / 255.0, (416, 416), swapRB=True, crop=False)
 
     # load network
-    output_layers, net = load_yolo(tiny=tiny)
+    output_layers, net = load_yolo(tiny=tiny, custom = custom)
 
     # load coco list
-    class_list = load_coco_names()
+    if custom:
+
+        class_list = load_custom_names()
+    else:
+
+        class_list = load_coco_names()
+    
+    # generate color palette
+    colors = np.random.uniform(0, 255, size=(len(class_list), 3))
 
     # detect objects
     net.setInput(blob)
@@ -266,19 +275,25 @@ def detect_image(image_path, tiny=True):
     ax.imshow(img)
     plt.show()
     
-from imutils.video.pivideostream import PiVideoStream
-def detect_webcam(tiny=True):
-    # generate color palette
-    colors = np.random.uniform(0, 255, size=(len(class_list), 3))
+# from imutils.video.pivideostream import PiVideoStream
+def detect_webcam(tiny=True, custom = True):
 
     # get camera feed
     video_capture = PiVideoStream().start()
 
     # load network
-    output_layers, net = load_yolo(tiny=tiny)
+    output_layers, net = load_yolo(tiny=tiny, custom = custom)
 
     # load coco list
-    class_list = load_coco_names()
+    if custom:
+
+        class_list = load_custom_names()
+    else:
+
+        class_list = load_coco_names()
+    
+    # generate color palette
+    colors = np.random.uniform(0, 255, size=(len(class_list), 3))
 
     while True:
 
@@ -302,11 +317,10 @@ def detect_webcam(tiny=True):
         frame = information_draw(boxes, confidences, class_ids, colors, class_list, frame)
 
         # show feed
-#        cv2.imshow("Image",frame)
+        # cv2.imshow("Image",frame)
         img = information_draw(boxes, confidences, class_ids, class_list, frame)
 
         # show edited image
-             
         fig = plt.figure(figsize=(20, 10))
 
         #ax2 = fig.add_subplot(1,2,1, xticks = [], yticks = [])
@@ -321,21 +335,52 @@ def detect_webcam(tiny=True):
             
     video_capture.release()
 
-###############################################
-# os.chdir("/Users/andreasmac/Documents/Github/AutonomousCar/object-detection")
+def detect_raspberry_cam(frame, output_layers, net, class_list):
 
-# directory = "../lane_detection/google_img/"
+    try:
+        
+        height, width, channels = frame.shape
+
+        # preprocess 
+        blob = cv2.dnn.blobFromImage(frame, 1 / 255.0, (320, 320), swapRB=True, crop=False)
+        
+        # detect objects
+        net.setInput(blob)
+        outs = net.forward(output_layers)
+
+        # calculate boxes and 
+        
+        boxes, confidences, class_ids = information_cal(outs, height, width)
+
+        # draw boxes and classification
+        frame2 = information_draw(boxes, confidences, class_ids, colors, class_list, frame)
+
+    except:
+        print("Error in det")
+
+    return frame2
+
+def detect_raspberry_cam_delay(frame):
+
+    # load names and yolo
+    output_layers, net = load_yolo(custom = True)
+    class_list = load_custom_names()
+
+    # generate color palette
+    colors = np.random.uniform(0, 255, size=(len(class_list), 3))
+
+    frame = detect_raspberry_cam(frame, output_layers, net, class_list, colors)
+
+    # delay
+    time.sleep(10)
+
+    # return detected frame
+    return frame
+
+###############################################
+os.chdir("/Users/andreasmac/Documents/Github/AutonomousCar/main/object-detection")
+
 directory = "./test-images/"
 
-# calibrate(directory+"marker.jpg", 16, 50)
-
-# detect_image(directory+"simon.jpg", tiny = False)
-
-# for image_path in list(os.listdir(directory)):
-
-#     try:
-#         detect_image(directory+image_path, tiny = False)
-#     except:
-#         print("Failed with image: ", image_path)
-
-detect_webcam(tiny=True)
+# detect_image(directory+"playo-test.jpeg")
+# detect_image(directory+"mainplaymo.jpg")
