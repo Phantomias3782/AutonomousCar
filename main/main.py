@@ -2,7 +2,7 @@ from flask import Flask, render_template, Response, request
 from camera import VideoCamera
 from car_controll import controll_car
 from lane_detection import lanedetect_steer
-from object_detection import detect_webcam,detect_webcam_delay
+from object_detection import object_detection 
 import cv2
 import time
 import threading
@@ -56,7 +56,7 @@ def gen2(camera):
     while True:
         frame = camera.get_frame()
         try:            
-            frame = detect_webcam(frame)
+            frame = object_detection.detect_webcam(frame)
         except Exception as e:
             print("Error in detection")
             print(e)
