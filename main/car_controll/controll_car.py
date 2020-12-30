@@ -3,17 +3,17 @@ import time
 
 class Car():
     def __init__(self):
-        #setup the raspberry for PWM on Pin 35
+        #setup the raspberry for PWM on Pin 33+35
         IO.setwarnings(False)
         IO.setmode(IO.BOARD)
-        IO.setup(35,IO.OUT)
         IO.setup(33,IO.OUT)
+        IO.setup(35,IO.OUT)
         #assing pin 33 to throttle and 35 to steering
-        self.steering =IO.PWM(35,50)
-        self.steering.start(0)
-        
         self.throttle =IO.PWM(33,50)
         self.throttle.start(0)
+
+        self.steering =IO.PWM(35,50)
+        self.steering.start(0)
         
         #steering config
         self.FULL_LEFT=10#44

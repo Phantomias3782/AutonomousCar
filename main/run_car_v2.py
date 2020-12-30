@@ -12,13 +12,19 @@ car = controll_car.Car()
 object_detection_thread = threading.Thread(target=object_detection.detect_webcam_delay, args=(1,))
 input("Hit Enter to run the car")
 car.run()
+object_output=None
+outputcounter=0
 while True:
     frame = camera.get_frame()
     try:
         if not object_detection_thread.is_alive():
             print("objectdetection started")
             object_detection_thread = threading.Thread(target=object_detection.detect_webcam_delay, args=(1,))
-            object_detection_thread.start()
+            object_output= object_detection_thread.start()
+        if object_output != None:
+            outputcounter+=1
+            object_output=None
+        print(outputcounter)
         frame2, canny, steering=lanedetect_steer.lane_detection(frame,"indoor")
         car.steer(steering)
 
