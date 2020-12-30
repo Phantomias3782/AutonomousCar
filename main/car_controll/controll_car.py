@@ -7,16 +7,13 @@ class Car():
         IO.setwarnings(False)
         IO.setmode(IO.BOARD)
         IO.setup(35,IO.OUT)
-
-        #assing pin 35 to steering
-
-
+        IO.setup(33,IO.OUT)
+        #assing pin 33 to throttle and 35 to steering
         self.steering =IO.PWM(35,50)
         self.steering.start(0)
         
-
-#        self.throttle =IO.PWM(37,50)
-#        self.throttle.start(0)
+        self.throttle =IO.PWM(33,50)
+        self.throttle.start(0)
         
         #steering config
         self.FULL_LEFT=10#44
@@ -25,22 +22,14 @@ class Car():
         self.LEFT=self.FULL_LEFT-self.STRAIGHT
         self.RIGHT=self.STRAIGHT-self.FULL_RIGHT
 
-        #throttle config
-        self.still = 0 
-        self.forward = 0
-        self.brake = 0
-        self.current_throttle = 0
-
-
-        
-
     def __del__(self):
+        self.throttle.ChangeDutyCycle(0.1)
         self.steering.stop()
+        self.throttle.stop()
 
     def steer(self,steeringrate):
         if steeringrate == None:
             pass
-        #print("Steering None")    
         else:
             if abs(steeringrate) >2:
                 steeringrate=0
@@ -51,51 +40,22 @@ class Car():
             else:
                  steeringrate=steeringrate*1.21
             if steeringrate == 0:
-    #            print("input 0")
                 self.steering.ChangeDutyCycle(self.STRAIGHT)    
             elif steeringrate > 0:
-                #print("input left")
-    #            print(self.STRAIGHT + self.LEFT * steeringrate)
                 steeringrate=self.STRAIGHT + self.LEFT * steeringrate            
                 if steeringrate > self.FULL_LEFT:
                     steeringrate=self.FULL_LEFT
                 self.steering.ChangeDutyCycle(steeringrate)
             elif steeringrate < 0:
-                #print("input right")
                 steeringrate=self.STRAIGHT - self.RIGHT * abs(steeringrate)
                 if steeringrate < self.FULL_RIGHT:
                     steeringrate=self.FULL_RIGHT
                 self.steering.ChangeDutyCycle(steeringrate)
             else:
-                print("Steeringinput ERROR!!!")
-        #self.steering.stop()
-#        time.sleep(0.5)
- #       self.steering.ChangeDutyCycle(0)
+                print("Steeringinput incorrect")
 
-    def throttle(self,throttlerate):
-            if self.throttle != throttlerate:
-                if throttlerate == 0:
-                    self.throttle = 0
-                    self.steering.ChangeDutyCycle(self.still)    
-                elif throttlerate > 0:
-                    self.throttle = 1
-                    self.steering.ChangeDutyCycle(fwd)
-                elif throttlerate < 0:
-                    self.throttle = -1
-                    self.steering.ChangeDutyCycle(brake)
+    def run(self):
+        self.throttle.ChangeDutyCycle(6.7)
 
-
-car = Car()
-car.steer(0.8)
-time.sleep(0.2)
-
-
-'''
-car.steer(1)
-time.sleep(10)
-car.steer(-1)
-time.sleep(1)
-car.steer(0)
-time.sleep(1)
-'''
-car.steering.stop()
+    def stop(self):
+        self.throttle.ChangeDutyCycle(0.1)

@@ -365,24 +365,12 @@ def detect_raspberry_cam(frame):
     return frame
 
 def detect_raspberry_cam_delay(frame):
-
-    # load names and yolo
-    output_layers, net = load_yolo(custom = True)
-    class_list = load_custom_names()
-
-    # generate color palette
-    colors = np.random.uniform(0, 255, size=(len(class_list), 3))
-
-    frame = detect_raspberry_cam(frame, output_layers, net, class_list, colors)
-
+    frame = detect_raspberry_cam(frame)
     # delay
     time.sleep(10)
 
     # return detected frame
     return frame
-
-###############################################
-#os.chdir("/Users/andreasmac/Documents/Github/AutonomousCar/main/object-detection")
 
 directory = "./test-images/"
 
