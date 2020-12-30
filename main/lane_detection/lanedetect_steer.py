@@ -204,7 +204,8 @@ def steer(image, left_line, right_line):
     x1 = int( ( slope_with / 2) + slope_l )
     x2 = int(img_x/2)
     if slope_with <100:
-        print(slope_with)
+        #print(slope_with)
+        pass
     if slope_with <85: 
         return None
     else:

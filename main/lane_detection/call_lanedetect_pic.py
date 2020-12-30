@@ -4,20 +4,25 @@ import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 import lanedetect_steer
 import cv2
+from timeit import default_timer as timer
+import numpy as np
 
 location = 'outdoor'
+time = []
 
 for image_path in list(os.listdir(f'./lane_detection_data/{location}')):
-    image = mpimg.imread(f'./lane_detection_data/{location}/{image_path}')
-    print(image_path)
+    start = timer()
 
-    print('input picture in call: ' + str(type(image)))
+    #print(image_path)
+    image = mpimg.imread(f'./lane_detection_data/{location}/{image_path}')
+    
+    #print('input picture in call: ' + str(type(image)))
 
     try:
         picture, canny, steering = lanedetect_steer.lane_detection(image, location)
-        print('output picture in call: ' + str(type(picture)))
+        #print('output picture in call: ' + str(type(picture)))
     except Exception:
-        print("Berechnungsfehler")
+        #print("Berechnungsfehler")
         continue
 
     # plot input image
@@ -32,7 +37,10 @@ for image_path in list(os.listdir(f'./lane_detection_data/{location}')):
 
     # plot also processed image
     ax.set_title(f"Output Image - Steering: {steering}") 
-    plt.show()
-
+    #plt.show()
+    end = timer()
+    time.append(float(end - start))
     if 0xFF == ord('q'):
         break
+
+print('durchschnittliche Zeit: ' + str(np.mean(time)))
