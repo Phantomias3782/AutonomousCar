@@ -86,8 +86,8 @@ class Car():
 
 
 car = Car()
-car.steer(0)
-time.sleep(1)
+car.steer(0.8)
+time.sleep(0.2)
 
 
 '''

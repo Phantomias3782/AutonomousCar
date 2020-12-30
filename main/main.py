@@ -8,7 +8,7 @@ import time
 import threading
 import os
 from datetime import datetime
-
+import OD2
 pi_camera = VideoCamera(flip=False) # flip pi camera if upside down.
 car = controll_car.Car()
 
@@ -43,7 +43,9 @@ def gen(camera):
             print("Error in detection")
             print(e)
         ret,frame=cv2.imencode(".jpg",frame) 
+        OD2.detect(frame)
         frame = frame.tobytes()
+        
         yield (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
 
