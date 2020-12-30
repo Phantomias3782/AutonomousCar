@@ -338,6 +338,7 @@ def detect_webcam(tiny=True, custom = True):
 
 class_list = load_custom_names()
 output_layers, net = load_yolo(tiny=True, custom = True)
+colors = np.random.uniform(0, 255, size=(len(class_list), 3))
 def detect_raspberry_cam(frame):
 
     try:
@@ -355,12 +356,13 @@ def detect_raspberry_cam(frame):
         boxes, confidences, class_ids = information_cal(outs, height, width)
 
         # draw boxes and classification
-        frame2 = information_draw(boxes, confidences, class_ids, colors, class_list, frame)
+        frame = information_draw(boxes, confidences, class_ids, colors, class_list, frame)
 
-    except:
+    except Exception as e:
         print("Error in det")
-
-    return frame2
+        print(e)
+        
+    return frame
 
 def detect_raspberry_cam_delay(frame):
 
