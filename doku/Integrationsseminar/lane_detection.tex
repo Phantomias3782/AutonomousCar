@@ -18,17 +18,32 @@ Wie in der Einführung in dieses Kapitel bereits angemerkt, kann für die Spurer
 
 \subsection{Umsetzung anhand maschinellem Lernen}
 In diesem unterkapitel wird die Lane Detection mit einem Ansatz des maschinellen Lernen betrachtet. Im Detail wird auf einen Ansatz im Bereich des Supervised Learning gesetzt.
-Der Hintergrund dessen ist, dass eine Szene nicht einzeln betrachtet werden kann. Wenn nur eine einzelne Momentaufnahme herangezogen wird um eine Entscheidung zu treffen wird diese schlechter ausfallen als wenn zusätzlich in die Vergangenheit geschaut wird. \cite{cnnld.2020}
+Der Hintergrund dessen ist, dass eine Szene nicht einzeln betrachtet werden kann. Wenn nur eine einzelne Momentaufnahme herangezogen wird um eine Entscheidung zu treffen wird diese schlechter ausfallen als wenn zusätzlich in die Vergangenheit geschaut wird. \cite{cnnld_2020}
 Das heißt im Detail, dass zum Beispiel das aktuelle Bild analysiert wird und dazu die letzten drei, jedoch mit einer geringeren Gewichtung. Damit kann das Ziel erreicht werden, Fehler in der Erkennung zu vermeiden, da aus den vorherigen Inputdaten der Verlauf der Straße hervorgeht und der aktuelle Input dann die jüngste Veränderung aufweist. Die Notwendigkeit kann multipel begründet werden. Zum einen kann die Fahrbahnmarkierung verschmutzt oder durch Fahrzeuge und Gegenstände unterbrochen sein, in den meisten Fällen sind es jedoch Schatten, schlechte Lichtverhältnisse, Tunnel aber vor allem dreck auf der Straße.
+Die Performance bei der Nutzung auch vorangegangener Bilder kann der folgenden Abbildung entnommen werden.
 
-Es gibt hauptsächlich zwei Arten von Deep Neural Networks. Zum einen Deep Convolutional Neural Network (DCNN), welches Inputdaten häufig mit mehreren Stufen der Convolution verarbeitet und gut geeignet für die Abstraktion von Merkmalen für Bilder und Videos ist. Zum anderen das Deep Recurrent Neural Network (DRNN), das Inputsignale rekursiv verarbeitet, indem es es in aufeinanderfolgende Blöcke aufteilt und vollständige Verbindungsschichten zwischen ihnen für die Statusausbreitung aufbaut. Die Vorteile zeigen sich bei der Vorhersage von Informationen für Zeitreihendaten.\cite{cnnld.2020}
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.8]{./img/LD_challenging_situations.png}
+    \caption{Spurerkennung in unterschiedlichen  Situationen. Erste Reihe: Drei verschiedene Fahrszenen. Zweite Reihe: Erkennung nur anhand des aktuellen Bildes. Dritte Reihe: Spurerkennung anhand des aktuellen und der letzten vier Bilder. \cite[S.1]{cnnld_2020}}
+    \label{fig:LDchallenge}
+\end{figure}
 
------------
-Basierend auf der obigen Diskussion wird ein hybrides tiefes neuronales Netzwerk zur Spurerkennung unter Verwendung mehrerer kontinuierlicher Fahrszenenbilder vorgeschlagen. Das vorgeschlagene hybride tiefe neuronale Netzwerk kombiniert das DCNN und das DRNN. In einer globalen Perspektive ist das vorgeschlagene Netzwerk ein DCNN, der mehrere Rahmen als Eingabe verwendet und die Spur des aktuellen Rahmens auf semantische Segmentierungsweise vorhersagt. Eine vollständig gefaltete DCNN-Architektur wird vorgestellt, um das Segmentierungsziel zu erreichen. Es enthält ein Encoder-Netzwerk und ein Decoder-Netzwerk, die garantieren, dass die endgültige Ausgabekarte dieselbe Größe wie das Eingabebild hat. In einer lokalen Perspektive werden vom Encodernetzwerk von DCNN abstrahierte Merkmale von einem DRNN weiterverarbeitet. Ein LSTM-Netzwerk (Long Short Term Memory) wird verwendet, um die Zeitreihen codierter Merkmale zu verarbeiten. Der Ausgang von DRNN soll die Informationen der kontinuierlichen Eingangsrahmen zusammengeführt haben und wird in das Decodernetz des DCNN eingespeist, um die Vorhersage der Spuren zu unterstützen.
 
-------------
-Based on the discussion above, a hybrid deep neural net- work is proposed for lane detection by using multiple contin- uous driving scene images. The proposed hybrid deep neural network combines the DCNN and the DRNN. In a global perspective, the proposed network is a DCNN, which takes multiple frames as an input, and predict the lane of the current frame in a semantic-segmentation manner. A fully convolution DCNN architecture is presented to achieve the segmentation goal. It contains an encoder network and a decoder network, which guarantees that the final output map has the same size as the input image. In a local perspective, features abstracted by the encoder network of DCNN are further processed by a DRNN. A long short-term memory (LSTM) network is employed to handle the time-series of encoded features. The output of DRNN is supposed to have fused the information of the continuous input frames, and is fed into the decoder network of the DCNN to help predict the lanes.
---------------
+Es gibt hauptsächlich zwei Arten von Deep Neural Networks. Zum einen \ac{DCNN}, welches Inputdaten häufig mit mehreren Stufen der Convolution verarbeitet und gut geeignet für die Abstraktion von Merkmalen für Bilder und Videos ist. Zum anderen das \ac{DRNN}, das Inputsignale rekursiv verarbeitet, indem es diese in aufeinander folgende Blöcke aufteilt und vollständige Verbindungsschichten für die Statusausbreitung zwischen ihnen aufbaut. Die Vorteile zeigen sich vor allem bei der Vorhersage von Informationen für Zeitreihendaten.\cite{cnnld_2020}
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.4]{./img/LD_architecture_combined_network.png}
+    \caption{Architektur des beschriebenen hybriden Deep Neural Network \cite[S.1]{cnnld_2020}}
+    \label{fig:LDHybridDNN}
+\end{figure}
+
+
+Das Team um Qin Zou \cite{cnnld_2020} erhofft sich aus der Kombination eben dieser beiden Netzwerke performante Ergebnisse. So wird ein hybrides Deep Neural Network zur Spurerkennung implementiert. Dabei werden mehrerer kontinuierliche Fahrszenen als Bilder verarbeitet. Das hybride Netzwerk verbindet also die Ansätze von \ac{DCNN} und \ac{DRNN}.
+Global betrachtet ist das vorgeschlagene Netzwerk ein \ac{DCNN}, welches mehrere Rahmen als Input verwendet und die Spur des aktuellen Rahmens auf Segmentierungsweise semantisch vorhersagt.
+Eine vollständig gefaltete (fully convolution) DCNN-Architektur wird benutzt, um das Segmentierungsziel zu erreichen. Es enthält ein Encoder-Netzwerk und ein Decoder-Netzwerk, diese garantieren, dass die endgültige Ausgabe dieselbe Größe, analog zum Eingabebild hat. Aus der lokalen Perspektive werden vom Encodernetzwerk die von DCNN abstrahierten Merkmale von einem DRNN weiterverarbeitet. Ein \ac{LSTM} Netzwerk wird verwendet, um die Zeitreihen codierter Merkmale zu verarbeiten. Der Output des DRNN führt die Informationen der kontinuierlichen Eingangsrahmen zusammen, welche dann in das Decodernetz des DCNN eingespeist werden, um dann letztendlich die Spuren Vorherzusagen beziehungsweise die Erkennung zu unterstützen. \cite{cnnld_2020}
 
 
 \subsection{Nutzung Bildmanipulation mithilfe von OpenCV}
