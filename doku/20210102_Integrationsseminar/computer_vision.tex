@@ -1,0 +1,56 @@
+\chapter{OpenCV} % Kommentar Simon: ich würd's in der Tat 'OpenCV' nennen, da 'Computer Vision' ein Oberbegriff ist.
+
+
+
+\section{Einleitung}
+Die Computer Vision ist ein zentrales Element für diese Projekt, da es für den Computer möglich gemacht werden muss seine Umgebung zu erkennen.
+Die Computer Vison kann beschrieben werden als der Weg des Bild in den Computer und wie ein Computer sehen kann. \cite{Priese2015}
+
+Im verlauf des Projekts wird \ac{OpenCV} für die Objekterkennung sowie die Spurerkennung verwendet.
+\ac{OpenCV} besteht aus mehr als 2500 optimierten Algorithmen zu Computer Vision und Machine Learning. 
+Diese Algorithmen können verwendet werden um Gesichter zu erkennen, bestimmte Objekte zu erkennen und sich bewegende Objekte zu folgen. 
+Diese ist lediglich ein kleiner Ausschnitt dessen was mit den fortschrittlichen Algorithmen der \ac{OpenCV} möglich ist.   \cite{OpenCV.2020}  
+
+
+
+Kapitel enthält: Einführung in Computer Vision im Allgemeinen und in opencv (cv2) im speziellen.
+benutzt für lane detction und object detection
+
+
+\section{Grayscaling}\label{sec:greyscaling} % max 1 seite
+- Grayscaling benötigen wir, um Farben aus dem Bild zu nehmen
+- durch dadurch sind Farben nicht mehr in 3 verschiedenen Farbtiefen also in RGB mit jeweils 255 ausprägungen, sondern nur balck in 255 ausprägungen
+- jetzt können wir also nur noch durch kontraste verschiedene Elemente im Bild erkennen
+- Das hilft uns, da wir nicht von vorn herein sagen können, welche Farbe die Fahrbahnbegrenzung haben wird, damit wir uns darauf fixieren können
+- in Baustellenbereichen zum bleistift wird meist eine Gelbe MArkierung, also abweichend von einer weißen benutzt
+
+- mal nachforschen ob kontraste im grayscale stärker sind als im Farbigen
+
+- die weitere Berechnung wird aufgrund der fehlenden Farbtiefe und somit zusätzlicher Parameter verringert
+- das bringt einen vorteil in der geschwindigkeit der berechnung und somit auch performance des gesamtsystems
+
+- um das Bild zu transformieren wird die Methode cvtColor aus openCV genutzt, dabei wird das übergebene Bild mit dem Befehl cv2.COLOR\_RGB2GRAY vom RGB spektrum auf ein grau Spektrum herunter gebrochen
+
+
+\section{Gaußsche Unschärfe} % max 1%
+
+- cv2.GaussianBlur ... das ist die Funktion die ich im Code benutze
+- das Bild wird quasi unscharf gemacht und die Farben glaube irgendwie bearbeitet aber lies das gern noch einmal nach
+
+% https://docs.opencv.org/4.5.0/dd/d1a/group__imgproc__feature.html#ga04723e007ed888ddf11d9ba04e2232de
+
+\section{Canny Transformation} % 1 - 2 seiten
+ 
+- im code : cv2.Canny
+
+das mit dem Canny ist in der Tat ziemlich wichtig ... das solltest du bisschen ausführlicher machen ... also dass irgendwie kontrastlinien erkannt werden und so dies das ... hab ich selbst nicht ganz verstanden, was da vor geht
+
+\section{Hough Transformation} % 1-2 Seiten
+
+% hough_lines(img, rho, theta, threshold, min_line_len, max_line_gap)
+
+im code: cv2.HoughLinesP()
+
+die hough transformation erkennt dann die vom canny gezeichneten linien und legt geraden drauf ... prinzip ist wieder klar aber wie das genau geht kann ich dir wieder nicht sagen ... da muss wieder literaturrecherche ran
+
+\section{Fazit}

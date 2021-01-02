@@ -1,0 +1,95 @@
+\chapter{Spur Erkennung}
+%Simon
+
+
+\section{Einführung} %0.5 Seiten
+Die wichtigste Funktionalität beim autonomen Fahren ist die Spurerkennung und die damit einhergehende Steuerung des Fahrzeugs in dem Bereich der Fahrbahnlinien. Das Forschungsgebiet wird unter dem englischen Begriff \ac{LD} zusammengefasst. Es gibt mehrere möglichkeiten die Fahrbahnlinien zu erkennen. 
+Dabei spielt die Beschaffenheit der Fahrbahn eine oft ungeahnt wichtige Rolle. Im Projekt wurde die Lane Detection zuerst in der Wohnung zweier Teammitglieder getestet. Dafür wurden Fahrspuren mit weisem Klebeband auf dem Boden markiert. Die Spurerkennung hat dabei gute Ergebnisse geliefert, da der Kontrast zwischen Boden und Markierung hoch war. Als dann aber zum ersten mal auf einem öffentlichen Parkplatz getestet wurde, war festzustellen, dass weise Körner im Asphalt bei so geringer Distanz zur Fahrbahn große Schwierigkeiten bergen. Deshalb wurde die Entschiedung für dieses Projekt getroffen zwischen zwei Terrains zu unterscheiden und die Spurerkennung darauf zu optimieren. Das ist zum einen die Strecke in der Wohnung aber auch die asphaltierte Fahrbahn auf dem Parkplatz.
+
+Es gibt unterschiedliche Ansätze und Modelle, wie eine Fahrbahnlinienerkennung implementiert werden kann. Zum einen durch den Einsatz von Künsltichen Intelligenzen, welche anhand gelernter Datensätze neue Spuren erkennen und zum anderen gibt es den Ansatz Fahrspuren allein mit Hilfe Bildbearbeitender Wekrzeuge zu erkennen. Da schon tiefgreifendes Wissen im Bereich der Bildbearbeitung im Team vorhanden war wurde dieses Prinzip weiter verfolgt.
+
+In den folgenden Unterkapiteln wird auf die verschiedenen Möglichkeiten der Spurerkennung eingegangen, dabei ins besondere auf die Python Bibliothek OpenCV. Aufbauend auf diesen Grundlagen wird dann die Datenstrecke implementiert und erläutert um am Ende diesen Kapitels den Wert für die Steuerung zu berechnen.
+
+
+\section{State of the Art der Spur Erkennung} %0.5 Seiten
+Für die Spurerkennung werden, wie bei der Objekterkennung im Regelfall mehrere Informationsquellen verarbeitet. Das sind vor allem Kamera- und Sensordaten aber auch Informationen über das \ac{GPS} wo sich das Fahrzeug zur Zeit befindet. Für dieses Projekt werden ausschließlich Kameradaten verwendet, was sich bei der Auswahl der Modelle widerspiegelt.
+
+Wie in der Einführung in dieses Kapitel bereits angemerkt, kann für die Spurerkennung ein rein Bildbearbeitender Ansatz oder maschinelles Lernen genutzt werden. Beide Bereiche werden folgt erläutert.
+
+\subsection{Umsetzung anhand maschinellem Lernen}
+In diesem unterkapitel wird die Lane Detection mit einem Ansatz des maschinellen Lernen betrachtet. Im Detail wird auf einen Ansatz im Bereich des Supervised Learning gesetzt.
+Der Hintergrund dessen ist, dass eine Szene nicht einzeln betrachtet werden kann. Wenn nur eine einzelne Momentaufnahme herangezogen wird um eine Entscheidung zu treffen wird diese schlechter ausfallen als wenn zusätzlich in die Vergangenheit geschaut wird. \cite{cnnld.2020}
+Das heißt im Detail, dass zum Beispiel das aktuelle Bild analysiert wird und dazu die letzten drei, jedoch mit einer geringeren Gewichtung. Damit kann das Ziel erreicht werden, Fehler in der Erkennung zu vermeiden, da aus den vorherigen Inputdaten der Verlauf der Straße hervorgeht und der aktuelle Input dann die jüngste Veränderung aufweist. Die Notwendigkeit kann multipel begründet werden. Zum einen kann die Fahrbahnmarkierung verschmutzt oder durch Fahrzeuge und Gegenstände unterbrochen sein, in den meisten Fällen sind es jedoch Schatten, schlechte Lichtverhältnisse, Tunnel aber vor allem dreck auf der Straße.
+
+Es gibt hauptsächlich zwei Arten von Deep Neural Networks. Zum einen Deep Convolutional Neural Network (DCNN), welches Inputdaten häufig mit mehreren Stufen der Convolution verarbeitet und gut geeignet für die Abstraktion von Merkmalen für Bilder und Videos ist. Zum anderen das Deep Recurrent Neural Network (DRNN), das Inputsignale rekursiv verarbeitet, indem es es in aufeinanderfolgende Blöcke aufteilt und vollständige Verbindungsschichten zwischen ihnen für die Statusausbreitung aufbaut. Die Vorteile zeigen sich bei der Vorhersage von Informationen für Zeitreihendaten.\cite{cnnld.2020}
+
+-----------
+Basierend auf der obigen Diskussion wird ein hybrides tiefes neuronales Netzwerk zur Spurerkennung unter Verwendung mehrerer kontinuierlicher Fahrszenenbilder vorgeschlagen. Das vorgeschlagene hybride tiefe neuronale Netzwerk kombiniert das DCNN und das DRNN. In einer globalen Perspektive ist das vorgeschlagene Netzwerk ein DCNN, der mehrere Rahmen als Eingabe verwendet und die Spur des aktuellen Rahmens auf semantische Segmentierungsweise vorhersagt. Eine vollständig gefaltete DCNN-Architektur wird vorgestellt, um das Segmentierungsziel zu erreichen. Es enthält ein Encoder-Netzwerk und ein Decoder-Netzwerk, die garantieren, dass die endgültige Ausgabekarte dieselbe Größe wie das Eingabebild hat. In einer lokalen Perspektive werden vom Encodernetzwerk von DCNN abstrahierte Merkmale von einem DRNN weiterverarbeitet. Ein LSTM-Netzwerk (Long Short Term Memory) wird verwendet, um die Zeitreihen codierter Merkmale zu verarbeiten. Der Ausgang von DRNN soll die Informationen der kontinuierlichen Eingangsrahmen zusammengeführt haben und wird in das Decodernetz des DCNN eingespeist, um die Vorhersage der Spuren zu unterstützen.
+
+------------
+Based on the discussion above, a hybrid deep neural net- work is proposed for lane detection by using multiple contin- uous driving scene images. The proposed hybrid deep neural network combines the DCNN and the DRNN. In a global perspective, the proposed network is a DCNN, which takes multiple frames as an input, and predict the lane of the current frame in a semantic-segmentation manner. A fully convolution DCNN architecture is presented to achieve the segmentation goal. It contains an encoder network and a decoder network, which guarantees that the final output map has the same size as the input image. In a local perspective, features abstracted by the encoder network of DCNN are further processed by a DRNN. A long short-term memory (LSTM) network is employed to handle the time-series of encoded features. The output of DRNN is supposed to have fused the information of the continuous input frames, and is fed into the decoder network of the DCNN to help predict the lanes.
+--------------
+
+
+\subsection{Nutzung Bildmanipulation mithilfe von OpenCV}
+
+Ein weiterer Ansatz ist die Nutzung bildmanipulatorischer Funktionen. Da im Team viel Wissen in diesem Bereich vorherrscht, wurde sich der Datenstrecke von Soumya Ranjan Behera \cite{behera_2019} als grober Anhaltspunkt bedient.
+Dabei werden die von einer installierten Kamera gelieferten Inputdaten zuerst in ein Bild aus Grau stufen umgewandelt. Das hat den Vorteil, dass zum einen die zu verarbeitende Datengröße um ein zwei drittel verringert wird. Das schließt sich daraus, dass Bilder im \ac{RGB} Farbraum verarbeitet werden und dieser mit einer Farbtiefe von 0 bis 255 Intensitätspunkten verarbeitet wird. Wenn nun nicht mehr drei Farben mit der gegebenen Farbtiefe, sondern nur eine, also Graustufen, verarbeitet wird, sind es zwei Dimensionen weniger. Dieser Effekt spiegelt sich hauptsächlich in der Verarbeitungszeit der späteren Prozesse wieder.
+
+gaussian_blur
+
+canny
+
+region_of_interest
+
+hough_lines
+
+weighted_img
+
+
+
+\section{Implementierung mit OpenCV} %1 Seite
+
+
+\subsection{Eingangsdaten Vorverarbeitung} %1 Seite
+
+
+\subection{Canny Edges} %1 Seite1
+
+
+\subection{Hough Transformation}
+
+
+\subsection{Verarbeitungsstrecke unter Python}
+
+wichtig ist auch die Geschwindigkeit der Verarbeitung ... in unserem Fall: durchschnittlich 0.06 Sekunden ... wir könnten also an die 1000 Bilder pro Sekunde verarbeiten (gar nicht mal so schlecht)
+
+
+%Welche Funktionen nutze ich - meine Strecke
+- grayscale
+    * cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
+- brightness_contrast
+    * ImageEnhance.Contrast(img)                [PILLOW funktion]
+    * ImageEnhance.Brightness(contrast_img)     [PILLOW funktion]
+- gaussian_blur
+    * v2.GaussianBlur(img, (kernel_size, kernel_size), 0)
+- canny
+    * cv2.Canny(img, low_threshold, high_threshold)
+- region of interest
+    * gets two defined vertices (from get_vertices)
+    * the lane polygon has to be set to null values that we can merge the input image and the polygon bitwise
+    * done that we add a little polygon to mask the front of the car 
+        (to see the car is important for validating the right camera position and a better angle of the lanes)
+- hough_lines
+    * hough transformation returns a image with the lines
+- slope_lines
+    * calculate wether a line is left or right and assign to each
+    * then print each line
+- slope
+    * take left and right line of lane and fill it with a color for lane
+- weighted_img
+- steering
+
+
+\section{Steuerung} %1 Seiten
+
