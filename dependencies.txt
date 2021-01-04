@@ -1,0 +1,10 @@
+numpy
+matplotlib
+opencv-python
+Flask
+imutils
+scipy
+keras
+tensorflow
+threading
+logging
