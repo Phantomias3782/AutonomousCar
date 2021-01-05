@@ -193,7 +193,7 @@ def weighted_img(img, initial_img, α=0.1, β=1., γ=0.):
 def steer(image, left_line, right_line):
     # center of image
     img_y, img_x = image.shape[:2]
-    cv2.line(image, (int(img_x/2),0), (int(img_x/2),img_y), color = (0, 255, 0), thickness = 10)
+    #cv2.line(image, (int(img_x/2),0), (int(img_x/2),img_y), color = (0, 255, 0), thickness = 10)
     
     # middle line:
     y1 = int(img_y*0.6) # height of slope
@@ -213,7 +213,7 @@ def steer(image, left_line, right_line):
         #cv2.line(image, (x1,y1), (x2,y2), color = (0, 0, 255), thickness = 10)
 
         steering = (x2 - x1) /100
-    #        print('image'+str(img_x)+' - '+str(img_y))
+    #       print('image'+str(img_x)+' - '+str(img_y))
     #       print('slope_l : '+str(slope_l)+' slope_r: '+str(slope_r)+' slope_middle: '+str(x1)+' img_middle: '+str(x2)+' steering: '+str(steering))
 
         return steering
@@ -307,27 +307,123 @@ def lane_finding_pipeline_outdoor(image):
 ################################          call for test         ################################
 ################################################################################################
 
-# os.chdir('/Users/Syman/Documents/Studij/Semester05/Seminar/AutonomousCar/main/lane_detection/lane_detection_data/indoor/')
-# image = mpimg.imread('pic.jpg')
+# os.chdir('/Users/Syman/Documents/Studij/Semester05/Seminar/AutonomousCar/main/lane_detection/lane_detection_data/outdoor/')
+# image = mpimg.imread('outdoor.jpg')
 
-# location = 'indoor'
+
+# location = 'outdoor'
 # picture, canny, steering = lane_detection(image, location)
 
 
-# # plot input image
-# fig = plt.figure(figsize=(20, 10),num='TEST')
+# fig = plt.figure(num='TEST')
+
 # ax = fig.add_subplot(1, 2, 1,xticks=[], yticks=[])
 # plt.imshow(canny)
 # ax.set_title("canny transformation")
-# ax = fig.add_subplot(1, 2, 2,xticks=[], yticks=[])
 
-# plt.imshow(picture)
-# #plt.imshow(picture, cmap='gray')
-# # plot also processed image
+# ax = fig.add_subplot(1, 2, 2,xticks=[], yticks=[])
+# plt.imshow(picture, cmap='gray')
 # ax.set_title("Output Image") 
 # #plt.savefig('first_outdoor/gray_test/w1h33.png')
+
 # plt.show()
 
 
+
+
+
+
+
+
+
+
+
+
+################################################################################################
+############################          call for Wiss.Arbeit         #############################
+################################################################################################
+
+os.chdir('/Users/Syman/Documents/Studij/Semester05/Seminar/AutonomousCar/main/lane_detection/lane_detection_data/outdoor/')
+image = mpimg.imread('Test_WissArbeit.jpg')
+
+
+################################################################################################
+# Grayscale for easier computation
+gray_img = grayscale(image)
+# Change Brightness and Contrast to avoid misclassification caused by ground
+bc_img = brightness_contrast(Input_img = gray_img, contrast = 2, brightness = 0.004)
+# Gaussian Smoothing to get clearness of lines (especialy at noisy grounds like our parklot test ground)
+smoothed_img = gaussian_blur(img = bc_img, kernel_size = 3)    
+
+#Canny Edge Detection
+
+# Calculate good threshold
+med_val = np.median(smoothed_img) 
+lower = int(max(0 ,0.7*med_val))
+upper = int(min(255,1.3*med_val))
+#print('lower: '+str(lower))
+#print('upper: '+ str(upper))
+# perform canny edge detection
+canny_img = canny(img = smoothed_img, low_threshold = lower, high_threshold = upper)
+
+# Mask Image Within a Polygon for each environment and car
+masked_img = region_of_interest(img = canny_img, vertices = get_vertices(image, 'border'), vertices_car = get_vertices(image, 'car'))
+# Hough Transform Lines
+lines, line_img = hough_lines(img = masked_img, rho = 0.6, theta = np.pi/180, threshold = 23, min_line_len = 20, max_line_gap = 180)
+# draw left and right line
+left_line, right_line = slope_lines(line_img, lines)
+# draw slope between two lines
+slope_weighted_img = slope(line_img, left_line, right_line)
+# add layer with slope lines to original input image
+output = weighted_img(img = slope_weighted_img, initial_img = image, α=0.8, β=1., γ=0.)
+
+# mask the output image again for better interpretation of results
+canny_mask = region_of_interest(img = canny_img, vertices = get_vertices(image, 'border'), vertices_car = get_vertices(image, 'car'))
+# compute steering advice for car
+
+################################################################################################
+
+
+
+fig = plt.figure(num='Einzelne Schritte der Datenverarbeitungsstrecke')
+
+ax = fig.add_subplot(2, 4, 1,xticks=[], yticks=[])
+ax.set_title("Input Image")
+plt.imshow(image)
+
+ax = fig.add_subplot(2, 4, 2,xticks=[], yticks=[])
+ax.set_title("Grayscaling")
+plt.imshow(gray_img, cmap='gray')
+
+ax = fig.add_subplot(2, 4, 3,xticks=[], yticks=[])
+ax.set_title("Brightness & Contrast")
+plt.imshow(bc_img, cmap='gray')
+
+ax = fig.add_subplot(2, 4, 4,xticks=[], yticks=[])
+ax.set_title("Gaussian Blur")
+plt.imshow(smoothed_img, cmap='gray')
+
+ax = fig.add_subplot(2, 4, 5,xticks=[], yticks=[])
+ax.set_title("Canny Edges")
+plt.imshow(canny_img, cmap='gray')
+
+ax = fig.add_subplot(2, 4, 6,xticks=[], yticks=[])
+ax.set_title("Region of Interest")
+plt.imshow(masked_img, cmap='gray')
+
+ax = fig.add_subplot(2, 4, 7,xticks=[], yticks=[])
+ax.set_title("Slope")
+plt.imshow(slope_weighted_img, cmap='gray')
+
+ax = fig.add_subplot(2, 4, 8,xticks=[], yticks=[])
+ax.set_title("Weighted/Output Image")
+plt.imshow(output, cmap='gray')
+
+
+#plt.imshow(picture, cmap='gray')
+
+
+#plt.savefig('first_outdoor/gray_test/w1h33.png')
+plt.show()
 
   

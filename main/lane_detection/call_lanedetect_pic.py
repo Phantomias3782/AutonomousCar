@@ -37,7 +37,7 @@ for image_path in list(os.listdir(f'./lane_detection_data/{location}')):
 
     # plot also processed image
     ax.set_title(f"Output Image - Steering: {steering}") 
-    #plt.show()
+    plt.show()
     end = timer()
     time.append(float(end - start))
     if 0xFF == ord('q'):
