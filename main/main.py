@@ -43,7 +43,7 @@ def gen(camera):
             print("Error in detection")
             print(e)
         ret,frame=cv2.imencode(".jpg",frame) 
-        OD2.detect(frame)
+        #OD2.detect(frame)
         frame = frame.tobytes()
         
         yield (b'--frame\r\n'

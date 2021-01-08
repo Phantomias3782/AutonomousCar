@@ -40,13 +40,16 @@ loaded_model.compile(loss='categorical_crossentropy', optimizer=optimizers.RMSpr
 def detect(frame):
     frame = cv2.resize(frame,(150,150))
     frame = frame.reshape((1,) + frame.shape)
+    frame=frame.reshape((-1,150,150,3))
     global sess
     global graph
     with graph.as_default():
         set_session(sess)
+        #frame=np.expand_dims(frame,axis=0)
+        #pred = loaded_model.predict(frame)
         pred = loaded_model.predict(frame)
-    
-    if pred[0] > pred[1]
+    print(pred)
+    if pred[0][0] > pred[0][1]:
         return None
     print("STOP!")
     return "STOP!"
