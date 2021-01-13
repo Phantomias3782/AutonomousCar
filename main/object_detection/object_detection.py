@@ -6,19 +6,7 @@ import time
 import imutils
 import os
 
-def load_coco_names():
-    "load names of coco text file"
-
-    # create epmty list
-    class_list = []
-
-    # open coco txt file
-    with open("coco.names", "r") as f:
-
-        class_list = [line.strip() for line in f.readlines()]
-    
-    # return list of classes
-    return class_list
+focalLength = None
 
 def load_custom_names():
     "load names of custom text file"
@@ -28,7 +16,7 @@ def load_custom_names():
 
     # open coco txt file
 
-    with open("./custom.names", "r") as f:
+    with open("./object_detection/custom.names", "r") as f:
 
         class_list = [line.strip() for line in f.readlines()]
     
@@ -36,24 +24,14 @@ def load_custom_names():
     print("Loaded custom names")
     return class_list
 
-
-def load_yolo(tiny = True, custom = False):
+def load_custom_yolo():
     "load yolo network. option to load tiny or normal one."
 
     print("started loading yolov3...")
 
     # get yolov3. Normal verison is tiny due to performance, for single pictures also normal yolo is performant
-    if tiny:
-
-        net = cv2.dnn.readNet("yolov3-tiny.weights", "yolov3-tiny.cfg")
-    
-    else:
-        
-        net = cv2.dnn.readNet("yolov3.weights", "yolov3.cfg")
-    
-    if custom:
-        net = cv2.dnn.readNet("yolov3-tiny-custom.weights", "yolov3-tiny-custom.cfg")
-        print("Loaded custom yolo")
+    net = cv2.dnn.readNet("./object_detection/yolov3-tiny-custom.weights", "./object_detection/yolov3-tiny-custom.cfg")
+    print("Loaded custom yolo")
 
     # extract single layers of network
     layer_names = net.getLayerNames()
@@ -66,6 +44,14 @@ def load_yolo(tiny = True, custom = False):
 
     # return
     return output_layers, net
+
+# loading necessary files for further use
+# load custom names
+class_list = load_custom_names()
+# generate color palette
+colors = np.random.uniform(0, 255, size=(len(class_list), 3))
+# load network
+output_layers, net = load_custom_yolo()
 
 def information_cal(outs, height, width):
     "calculate objects in images"
@@ -110,18 +96,11 @@ def check_reaction(label):
     "if label in speified list send signal"
 
     # set list
-    check_list = ["person", "car", "PlaymoPerson"]
+    check_list = ["PlaymoPerson"]
 
     if label in check_list:
-
-        # reaction
-        print("Potential action required!")
-
         return True
-
-    else:
-
-        return False
+    return False
 
 def calculate_distance(image, object_width):
     "get image and calculate distance to object"
@@ -131,7 +110,7 @@ def calculate_distance(image, object_width):
     marker_distance = 50
 
     # check if calibration is done
-    if "focalLength" in globals():
+    if focalLength != None:
 
         # calcuate distance
         distance = round((marker_width * focalLength) / object_width, 2)
@@ -141,7 +120,7 @@ def calculate_distance(image, object_width):
 
     else:
 
-        calibrate("./test-images/marker.jpg", marker_width, marker_distance)
+        calibrate("./object_detection/test-images/marker.jpg", marker_width, marker_distance)
 
         # calcuate distance
         distance = round((marker_width * focalLength) / object_width, 2)
@@ -169,10 +148,7 @@ def calibrate(image, marker_width, marker_distance):
     marker = cv2.minAreaRect(c)
 
     # check edged image
-    cv2.imwrite("gray_test.jpg", edged)
-    
-    # make global (db for one variable is oversized)
-    global focalLength
+    # cv2.imwrite("./object_detection/gray_test.jpg", edged)
 
     # calculate focalLength
     focalLength = (marker[1][0] * marker_distance) / marker_width
@@ -189,7 +165,6 @@ def information_draw(boxes, confidences, class_ids, colors, class_list, img):
 
     indexes = cv2.dnn.NMSBoxes(boxes, confidences, threshold, nms_threshold)
 
-    
     # set font and other settings
     font = cv2.FONT_HERSHEY_PLAIN
     rec_width = 1
@@ -217,128 +192,10 @@ def information_draw(boxes, confidences, class_ids, colors, class_list, img):
 
                 print("distance to ", label, "is ", distance, "cm")
 
-                # interface to car movement! stop under certain distance to object
-
-            else:
-
-                print("No action required")
-    
     # return edited image
     return img
 
-def detect_image(image_path, tiny=True, custom = True):
-
-    # set figure
-    fig = plt.figure(figsize=(20, 10))
-
-    ax2 = fig.add_subplot(1,2,1, xticks = [], yticks = [])
-
-	# load and show original image
-    image_path=os.path.abspath(os.getcwd())+image_path[1:]
-    img_original = mping.imread(image_path)
-    ax2.imshow(img_original)
-    ax2.set_title("Original")
-
-    # get dimensions
-    height, width, channels = img_original.shape
-
-    # preprocess image
-    blob = cv2.dnn.blobFromImage(img_original, 1 / 255.0, (416, 416), swapRB=True, crop=False)
-
-    # load network
-    output_layers, net = load_yolo(tiny=tiny, custom = custom)
-
-    # load coco list
-    if custom:
-
-        class_list = load_custom_names()
-    else:
-
-        class_list = load_coco_names()
-    
-    # generate color palette
-    colors = np.random.uniform(0, 255, size=(len(class_list), 3))
-
-    # detect objects
-    net.setInput(blob)
-    outs = net.forward(output_layers)
-
-    # calculate boxes and classifications
-    boxes, confidences, class_ids = information_cal(outs, height, width)
-
-    # draw boxes and classification
-    img = information_draw(boxes, confidences, class_ids,colors, class_list, img_original)
-
-    # show edited image
-    ax = fig.add_subplot(1,2,2, xticks = [], yticks = [])
-    ax.set_title("Detected")
-    ax.imshow(img)
-    plt.show()
-    
-# from imutils.video.pivideostream import PiVideoStream
-def detect_webcam(tiny=True, custom = True):
-
-    # get camera feed
-    video_capture = PiVideoStream().start()
-
-    # load network
-    output_layers, net = load_yolo(tiny=tiny, custom = custom)
-
-    # load coco list
-    if custom:
-
-        class_list = load_custom_names()
-    else:
-
-        class_list = load_coco_names()
-    
-    # generate color palette
-    colors = np.random.uniform(0, 255, size=(len(class_list), 3))
-
-    while True:
-
-        # get frame
-        time.sleep(2)
-        frame = video_capture.read()
-        
-        height, width, channels = frame.shape
-
-        # preprocess frame
-        blob = cv2.dnn.blobFromImage(frame, 1 / 255.0, (320, 320), swapRB=True, crop=False)
-        
-        # detect objects
-        net.setInput(blob)
-        outs = net.forward(output_layers)
-
-        # calculate boxes and classifications
-        boxes, confidences, class_ids = information_cal(outs, height, width)
-
-        # draw boxes and classification
-        frame = information_draw(boxes, confidences, class_ids, colors, class_list, frame)
-
-        # show feed
-        # cv2.imshow("Image",frame)
-        img = information_draw(boxes, confidences, class_ids, class_list, frame)
-
-        # show edited image
-        fig = plt.figure(figsize=(20, 10))
-
-        #ax2 = fig.add_subplot(1,2,1, xticks = [], yticks = [])
-        ax = fig.add_subplot(1,2,2, xticks = [], yticks = [])
-        ax.set_title("Detected")
-        ax.imshow(img)
-        plt.show()
-        
-        break
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            break
-            
-    video_capture.release()
-
-class_list = load_custom_names()
-output_layers, net = load_yolo(tiny=True, custom = True)
-colors = np.random.uniform(0, 255, size=(len(class_list), 3))
-def detect_raspberry_cam(frame):
+def detection_on_image(frame):
     try:
         height, width, channels = frame.shape
 
@@ -362,15 +219,60 @@ def detect_raspberry_cam(frame):
         
     return frame
 
+def show_image_detection(image_path):
+
+    # set figure
+    fig = plt.figure(figsize=(20, 10))
+
+    ax2 = fig.add_subplot(1,2,1, xticks = [], yticks = [])
+
+	# load and show original image
+    image_path=os.path.abspath(os.getcwd())+image_path[1:]
+    img_original = mping.imread(image_path)
+    ax2.imshow(img_original)
+    ax2.set_title("Original")
+
+    # detect objects in image
+    img = detection_on_image(img_original)
+
+    # show edited image
+    ax = fig.add_subplot(1,2,2, xticks = [], yticks = [])
+    ax.set_title("Detected")
+    ax.imshow(img)
+    plt.show()
+    
+def show_image_detection_on_cam():
+
+    # get camera feed
+    video_capture = PiVideoStream().start()
+
+    while True:
+
+        # get frame
+        time.sleep(2)
+        frame = video_capture.read()
+        
+         # detect objects in image
+        img = detection_on_image(frame)
+        
+        # show edited image
+        fig = plt.figure(figsize=(20, 10))
+
+        #ax2 = fig.add_subplot(1,2,1, xticks = [], yticks = [])
+        ax = fig.add_subplot(1,2,2, xticks = [], yticks = [])
+        ax.set_title("Detected")
+        ax.imshow(img)
+        plt.show()
+        
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
+            
+    video_capture.release()
+
 def detect_raspberry_cam_delay(frame):
-    frame = detect_raspberry_cam(frame)
+    frame = detection_on_image(frame)
     # delay
     time.sleep(10)
 
     # return detected frame
     return frame
-
-directory = "./test-images/"
-
-# detect_image(directory+"playo-test.jpeg")
-# detect_image(directory+"mainplaymo.jpg")
