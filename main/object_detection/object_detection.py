@@ -52,7 +52,6 @@ def load_yolo(tiny = True, custom = False):
         net = cv2.dnn.readNet("yolov3.weights", "yolov3.cfg")
     
     if custom:
-
         net = cv2.dnn.readNet("yolov3-tiny-custom.weights", "yolov3-tiny-custom.cfg")
         print("Loaded custom yolo")
 
@@ -340,7 +339,6 @@ class_list = load_custom_names()
 output_layers, net = load_yolo(tiny=True, custom = True)
 colors = np.random.uniform(0, 255, size=(len(class_list), 3))
 def detect_raspberry_cam(frame):
-
     try:
         height, width, channels = frame.shape
 
