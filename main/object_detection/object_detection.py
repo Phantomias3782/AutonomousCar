@@ -206,7 +206,7 @@ def detection_on_image(frame):
         net.setInput(blob)
         outs = net.forward(output_layers)
 
-        # calculate boxes and 
+        # calculate boxes and confidences
         
         boxes, confidences, class_ids = information_cal(outs, height, width)
 

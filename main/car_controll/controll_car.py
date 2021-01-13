@@ -16,18 +16,20 @@ class Car():
         self.steering.start(0)
         
         #steering config
-        self.FULL_LEFT=10#44
+        self.FULL_LEFT=10
         self.STRAIGHT=8
-        self.FULL_RIGHT=6#19
+        self.FULL_RIGHT=6
         self.LEFT=self.FULL_LEFT-self.STRAIGHT
         self.RIGHT=self.STRAIGHT-self.FULL_RIGHT
 
+# resetting GPI-Output, when Car-instance gets dropped
     def __del__(self):
         self.throttle.ChangeDutyCycle(0.1)
         self.steering.stop()
         self.throttle.stop()
 
     def steer(self,steeringrate):
+    # check the steering input and set it to max 1 / -1
         if steeringrate == None:
             pass
         else:
@@ -39,23 +41,22 @@ class Car():
                 steeringrate=1 
             else:
                  steeringrate=steeringrate*1.99999999953251
+    # check in which direction the car should turn
             if steeringrate == 0:
                 self.steering.ChangeDutyCycle(self.STRAIGHT)    
             elif steeringrate > 0:
+                # calculate stering input and set it to max steeringrate if input is too high after calculation
                 steeringrate=self.STRAIGHT + self.LEFT * steeringrate            
                 if steeringrate > self.FULL_LEFT:
                     steeringrate=self.FULL_LEFT
+                # change the GPIO signal to the new steeringrate
                 self.steering.ChangeDutyCycle(steeringrate)
             elif steeringrate < 0:
+                # calculate stering input and set it to max steeringrate if input is too high after calculation
                 steeringrate=self.STRAIGHT - self.RIGHT * abs(steeringrate)
                 if steeringrate < self.FULL_RIGHT:
                     steeringrate=self.FULL_RIGHT
+                # change the GPIO signal to the new steeringrate
                 self.steering.ChangeDutyCycle(steeringrate)
             else:
                 print("Steeringinput incorrect")
-
-    def run(self):
-        self.throttle.ChangeDutyCycle(6.7)
-
-    def stop(self):
-        self.throttle.ChangeDutyCycle(0.1)

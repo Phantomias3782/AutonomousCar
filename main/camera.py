@@ -1,7 +1,3 @@
-#Modified by smartbuilds.io
-#Date: 27.09.20
-#Desc: This scrtipt script..
-
 import cv2
 from imutils.video.pivideostream import PiVideoStream
 import imutils
@@ -9,19 +5,25 @@ import time
 import numpy as np
 
 class VideoCamera(object):
+    # initialise rasperry pi camera module
     def __init__(self, flip = False):
         self.vs = PiVideoStream().start()
         self.flip = flip
+        # wait for the camera to start
         time.sleep(2.0)
-
+    
+    # resetting VideoCamera-instance, when it gets dropped
     def __del__(self):
+        # stop recording
         self.vs.stop()
 
+    # method to correct the camera input, if the camera is upside-down
     def flip_if_needed(self, frame):
         if self.flip:
             return np.flip(frame, 0)
         return frame
 
+    # getting frames from rasperry pi camera module
     def get_frame(self):
         frame = self.flip_if_needed(self.vs.read())
         return frame
