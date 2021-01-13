@@ -20,7 +20,7 @@ while True:
         #     # object_thread = threading.Thread(target=detect_webcam_delay, args=(frame,))
         #     object_thread = threading.Thread(target=OD2.detect, args=(frame,))
         #     object_thread.start()
-        frame2, canny, steering=lanedetect_steer.lane_detection(frame,"indoor")
+        frame2, canny, steering=lanedetect_steer.lane_detection(frame,"outdoor")
         car.steer(steering)
         #print(steering)
 

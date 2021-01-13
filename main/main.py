@@ -17,7 +17,7 @@ app = Flask(__name__)
 
 def save_frames(frame):
     now = datetime.now()    
-    cv2.imwrite("./pics/"+str(now)+".jpg",frame)
+#    cv2.imwrite("./pics/"+str(now)+".jpg",frame)
     time.sleep(3)
     
 @app.route('/')
@@ -36,9 +36,9 @@ def gen(camera):
             #    object_thread = threading.Thread(target=detect_webcam_delay, args=(frame,))
              #s   object_thread.start()            
             
-            frame, canny, steering=lanedetect_steer.lane_detection(frame,"indoor")
+            frame, canny, steering=lanedetect_steer.lane_detection(frame,"outdoor")
             car.steer(steering)
-            time.sleep(0.0125)
+#            time.sleep(0.0125)
         except Exception as e:
             print("Error in detection")
             print(e)

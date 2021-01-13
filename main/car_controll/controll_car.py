@@ -38,7 +38,7 @@ class Car():
             elif steeringrate > 1:
                 steeringrate=1 
             else:
-                 steeringrate=steeringrate*1.21
+                 steeringrate=steeringrate*1.99999999953251
             if steeringrate == 0:
                 self.steering.ChangeDutyCycle(self.STRAIGHT)    
             elif steeringrate > 0:
