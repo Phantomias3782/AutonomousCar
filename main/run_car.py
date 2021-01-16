@@ -9,12 +9,12 @@ from object_detection import object_detection
 camera = VideoCamera(flip=False)
 car = controll_car.Car()
 
-#object_thread = threading.Thread(target=detect_webcam_delay, args=(1,))
+#object_thread = threading.Thread(target=object_detection.detect_raspberry_cam_delay, args=(1,))
 while True:
     frame = camera.get_frame()
     try:
         # if not object_thread.is_alive():
-        #     object_thread = threading.Thread(target=detect_webcam_delay, args=(frame,))
+        #     object_thread = threading.Thread(target=object_detection.detect_raspberry_cam_delay, args=(frame,))
         #     object_thread.start()
 
         # Get steering input instruction from lanedetect_steer

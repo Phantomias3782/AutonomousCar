@@ -191,6 +191,7 @@ def information_draw(boxes, confidences, class_ids, colors, class_list, img):
                 distance = calculate_distance(img, w)
 
                 print("distance to ", label, "is ", distance, "cm")
+                print("STOP!")
 
     # return edited image
     return img
@@ -273,6 +274,5 @@ def detect_raspberry_cam_delay(frame):
     frame = detection_on_image(frame)
     # delay
     time.sleep(10)
-
     # return detected frame
     return frame
