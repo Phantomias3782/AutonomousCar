@@ -60,3 +60,9 @@ class Car():
                 self.steering.ChangeDutyCycle(steeringrate)
             else:
                 print("Steeringinput incorrect")
+
+    def run(self):
+        self.throttle.ChangeDutyCycle(6.7)
+
+    def stop(self):
+        self.throttle.ChangeDutyCycle(0.1) 
