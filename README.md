@@ -17,10 +17,6 @@ These instructions will get you a copy of the project up and running on your loc
 * [YOLO](https://pjreddie.com/darknet/yolo/)
 
 
-@JAN ... hier vielleicht noch dein Dependency Repo's aufnehmen !?
-* [ROME](https://rometools.github.io/rome/)
-
-
 ## Authors
 
 * **Jan Brebeck** - *PiCar work* - [Brebeck-Jan](https://github.com/Brebeck-Jan)
@@ -38,3 +34,4 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 
 * special Thanks to Soumya Ranjan Behera and his [Lane Line Detection](https://www.kaggle.com/soumya044/lane-line-detection/notebook) which was used as a Blueprint for this Lane Detection Pipeline.
 
+@JAN ... hier vielleicht noch dein Dependency Repo's aufnehmen !?
