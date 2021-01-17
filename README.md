@@ -14,7 +14,7 @@ These instructions will get you a copy of the project up and running on your loc
 ## Built With
 
 * [OpenCV](https://opencv.org)
-* [YOLO](https://wiki.loliot.net/docs/lang/python/libraries/yolov4/python-yolov4-about/)
+* [YOLO](https://pjreddie.com/darknet/yolo/)
 
 
 @JAN ... hier vielleicht noch dein Dependency Repo's aufnehmen !?
