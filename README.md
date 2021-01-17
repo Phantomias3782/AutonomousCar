@@ -19,10 +19,10 @@ These instructions will get you a copy of the project up and running on your loc
 
 ## Authors
 
-* **Jan Brebeck** - *PiCar work* - [Brebeck-Jan](https://github.com/Brebeck-Jan)
-* **Andreas Bernrieder** - *Initial work* - [Phantomias3782](https://github.com/Phantomias3782)
-* **Simon Scapan** - *Initial work* - [SimonScapan](https://github.com/SimonScapan)
-* **Thorsten Hilbradt** - *Initial work* - [Thorsten-H](https://github.com/Thorsten-H)
+* **Jan Brebeck** - *PiCar* - [Brebeck-Jan](https://github.com/Brebeck-Jan)
+* **Andreas Bernrieder** - *Object Detection* - [Phantomias3782](https://github.com/Phantomias3782)
+* **Simon Scapan** - *Lane Detection* - [SimonScapan](https://github.com/SimonScapan)
+* **Thorsten Hilbradt** - *Contribution* - [Thorsten-H](https://github.com/Thorsten-H)
 
 
 ## License
