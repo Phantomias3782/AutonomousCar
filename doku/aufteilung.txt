@@ -1,5 +1,0 @@
-Arbeitsaufteilung Seminararbeit:
-Thorsten Hilbradt: Einleitung, Einführung in OpenCV, Abschluss
-Simon Scapan: Lane Detection
-Andreas Bernrieder: Object Detection
-Jan Brebeck: Praktische Umsetzung des Raspberry Pi Cars
