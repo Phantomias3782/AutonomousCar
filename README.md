@@ -2,7 +2,7 @@
 
 ![SELMA](advertising/SELMA_Testfahrt.gif)
 
-Das Projekt entstand im Zusammenhang des Integrationsseminares im Studium Data Science an der Dualen Hochschule Baden-Württemberg (DHBW) Mannheim
+Das Projekt entstand im Zusammenhang des Integrationsseminares im Studium Data Science an der Dualen Hochschule Baden-Württemberg (DHBW) Mannheim. Eine erweiterte Dokumentation ist als wissenschaftliche Ausarbeitung als PDF hinterlegt.
 
 ## Getting Started
 
