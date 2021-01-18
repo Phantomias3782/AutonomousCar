@@ -8,6 +8,7 @@ import time
 import threading
 from datetime import datetime
 
+# initialize camera and car object
 pi_camera = VideoCamera(flip=False)
 car = controll_car.Car()
 app = Flask(__name__)

@@ -7,30 +7,32 @@ import math
 from PIL import Image, ImageEnhance
 
 ################################################################################################
-################################         defining pipeline       ###############################
+#######################         defining lane detection functions        #######################
 ################################################################################################
 
 def grayscale(img):
     """
     Applies the Grayscale transform.
     
-    This will return an image with only one color channel."""
+    This will return an image with only one color channel.
+    """
     return cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
 
 def brightness_contrast(input_img, contrast, brightness):
     """
     Applies change in Brightness and Contrast.
     
-    Works with PIL package, but input image has to be of numpy array."""
+    Works with PIL package, but input image has to be of numpy array.
+    """
 
     # change Image from np.array to PIL.Image
     img = Image.fromarray(input_img)
 
-    # contrast
+    # enhance contrast
     enhancer = ImageEnhance.Contrast(img)
     contrast_img = enhancer.enhance(contrast)
 
-    # brightness
+    # enhance brightness
     enhancer = ImageEnhance.Brightness(contrast_img)
     brightness_img = enhancer.enhance(brightness)
     
@@ -83,10 +85,12 @@ def region_of_interest(img, vertices, vertices_car):
     return masked_image
 
 def get_vertices(image, scope):
-    """Applies Vertices for later masking of the stream.
+    """
+    Applies Vertices for later masking of the stream.
 
     This will return a numpy array 
-    depending wether scope is set to car or border."""
+    depending wether scope is set to car or border.
+    """
 
     if scope == 'border':
         rows, cols = image.shape[:2]
@@ -96,8 +100,6 @@ def get_vertices(image, scope):
         top_right    = [cols*0.9, rows*0.4] 
 
         ver = np.array([[bottom_left, top_left, top_right, bottom_right]], dtype=np.int32)
-        return ver
-
     elif scope =='car':
         rows, cols = image.shape[:2]
         bottom_left  = [cols*0.2, rows]
@@ -106,7 +108,7 @@ def get_vertices(image, scope):
         top_right    = [cols*0.6, rows*0.9] 
 
         ver = np.array([[bottom_left, top_left, top_right, bottom_right]], dtype=np.int32)
-        return ver
+    return ver
 
 def hough_lines(img, rho, theta, threshold, min_line_len, max_line_gap):
     """
@@ -123,13 +125,15 @@ def hough_lines(img, rho, theta, threshold, min_line_len, max_line_gap):
     return lines, line_img
 
 def slope_lines(image,lines):
-    """Applies slope lines.
+    """
+    Applies slope lines.
 
     Input ´image´ are therefore the lines from hough transformation.
     
     Those were divided into two categories wether the line ist left or right.
     This will return left and right line with an array of parameters (m, c)
-    of the form ´y = m * x + c´."""
+    of the form ´y = m * x + c´.
+    """
 
     left_lines = [] # Like /
     right_lines = [] # Like \
@@ -153,9 +157,11 @@ def slope_lines(image,lines):
     return left_line, right_line
 
 def slope(image, left_line, right_line):
-    """Applies slope to an image depending on left and right line.
+    """
+    Applies slope to an image depending on left and right line.
 
-    This will return a image."""
+    This will return a image.
+    """
 
     img = image.copy()
     poly_vertices = []
@@ -221,15 +227,15 @@ def steer(image, left_line, right_line):
 
     slope_l = (y1 - left_line[1]) / left_line[0]
     slope_r = (y1 - right_line[1]) / right_line[0]
-    slope_with = (slope_r - slope_l)
+    slope_width = (slope_r - slope_l)
 
-    x1 = int( ( slope_with / 2) + slope_l )
+    x1 = int( ( slope_width / 2) + slope_l )
     x2 = int(img_x/2)
 
-    # if the slope is lower 85 then we assume a false detection and don't want to steer
-    if slope_with <100:
+    # if the slope width is lower 85 then we assume a false detection and don't want to steer
+    if slope_width <100:
         pass
-    if slope_with <85: 
+    if slope_width <85: 
         return None
     else:
         steering = (x2 - x1) /100
@@ -237,7 +243,7 @@ def steer(image, left_line, right_line):
         return steering
 
 ################################################################################################
-################################         calling pipeline       ################################
+#############################         calling lane detection       #############################
 ################################################################################################
 
 def lane_detection(image, location='outdoor'):

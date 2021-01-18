@@ -1,15 +1,12 @@
 from camera import VideoCamera
 from car_controll import controll_car
-import time
-import logging
-import threading
 from lane_detection import lanedetect_steer
 from object_detection import object_detection
 
 camera = VideoCamera(flip=False)
 car = controll_car.Car()
 
-#object_thread = threading.Thread(target=object_detection.detect_raspberry_cam_delay, args=(1,))
+# object_thread = threading.Thread(target=object_detection.detect_raspberry_cam_delay, args=(1,))
 while True:
     frame = camera.get_frame()
     try:
