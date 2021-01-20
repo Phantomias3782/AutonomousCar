@@ -6,15 +6,29 @@ Das Projekt entstand im Zusammenhang des Integrationsseminares im Studium Data S
 
 ## Getting Started
 
-@JAN please write here
-```
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
-```
+### Step 1 - Install all dependencys
+
+Therefore simply run the <span>install.sh</span>
+This will install all needed libaries, that can be found in <span>dependencies.txt</span> and <span>apt.txt</span>
+
+### Step 2 - Install the pi to the car
+
+Therefor you need to connect the camera to the pi and change the wiring harness of the car as shown below:
+
+<img src="doku/Schaltplan.jpg" alt="drawing" width="400"/>
+
+
+### Step 3 - Run the car
+
+Now you can use the <span>run_car.py</span> or main<span>.py</span> script to either just contoll the car or also see the detection in the local netwerk via localhost:5000/.
+
 
 ## Built With
 
 * [OpenCV](https://opencv.org)
 * [YOLO](https://pjreddie.com/darknet/yolo/)
+* [RPi.GPIO](www.raspberrypi.org/)
+* [Flask](https://palletsprojects.com/p/flask/)
 
 
 ## Authors
@@ -27,11 +41,10 @@ These instructions will get you a copy of the project up and running on your loc
 
 ## License
 
-@JAN please change
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
+This project is licensed under the MIT License - see the [LICENSE.md](LICENSE) file for details
 
 ## Acknowledgments
 
-* special Thanks to Soumya Ranjan Behera and his [Lane Line Detection](https://www.kaggle.com/soumya044/lane-line-detection/notebook) which was used as a Blueprint for this Lane Detection Pipeline.
-
-@JAN ... hier vielleicht noch dein Dependency Repo's aufnehmen !?
+Special Thanks to:
+*  Soumya Ranjan Behera and his [Lane Line Detection](https://www.kaggle.com/soumya044/lane-line-detection/notebook) which was used as a Blueprint for this Lane Detection Pipeline.
+* EbenKouao for his [Pi Camera Stream Flask](https://github.com/EbenKouao/pi-camera-stream-flask) which was used to implement our livestream.
