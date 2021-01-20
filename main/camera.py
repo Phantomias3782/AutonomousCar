@@ -1,3 +1,9 @@
+# Based on: https://github.com/EbenKouao/pi-camera-stream-flask
+# Copyright smartbuild.io Licensed under MIT
+# See license text at https://github.com/EbenKouao/pi-camera-stream-flask/blob/master/LICENSE
+# Modified by Jan Brebeck
+# Date: 20.01.21
+
 import cv2
 from imutils.video.pivideostream import PiVideoStream
 import imutils
