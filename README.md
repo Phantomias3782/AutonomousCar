@@ -8,8 +8,8 @@ Das Projekt entstand im Zusammenhang des Integrationsseminares im Studium Data S
 
 ### Step 1 - Install all dependencys
 
-Therefore simply run the <span>install.sh</span>
-This will install all needed libaries, that can be found in <span>dependencies.txt</span> and <span>apt.txt</span>
+Therefore simply run the [install.sh](install.sh)
+This will install all needed libaries, that can be found in [dependencies.txt](dependencies.txt) and [apt.txt](apt.txt).
 
 ### Step 2 - Install the pi to the car
 
@@ -20,7 +20,7 @@ Therefor you need to connect the camera to the pi and change the wiring harness 
 
 ### Step 3 - Run the car
 
-Now you can use the <span>run_car.py</span> or main<span>.py</span> script to either just contoll the car or also see the detection in the local netwerk via localhost:5000/.
+Now you can use the [run_car.py](./main/run_car.py) or [main.py](./main/main.py) script to either just contoll the car or also see the detection in the local netwerk via localhost:5000/.
 
 
 ## Built With
