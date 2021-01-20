@@ -2,7 +2,7 @@
 
 ![SELMA](advertising/SELMA_Testfahrt.gif)
 
-Das Projekt entstand im Zusammenhang des Integrationsseminares im Studium Data Science an der Dualen Hochschule Baden-Württemberg (DHBW) Mannheim. Eine erweiterte Dokumentation ist als wissenschaftliche Ausarbeitung als PDF hinterlegt.
+The project was created in connection with the integration seminar in the Data Science course at the Baden-Württemberg Cooperative State University (DHBW) Mannheim. An extended documentation is stored as a scientific elaboration as PDF.
 
 ## Getting Started
 
@@ -13,14 +13,14 @@ This will install all needed libaries, that can be found in [dependencies.txt](d
 
 ### Step 2 - Install the pi to the car
 
-Therefor you need to connect the camera to the pi and change the wiring harness of the car as shown below:
+Therefore you need to connect the camera to the pi and change the wiring harness of the car as shown below:
 
 <img src="doku/Schaltplan.jpg" alt="drawing" width="400"/>
 
 
 ### Step 3 - Run the car
 
-Now you can use the [run_car.py](./main/run_car.py) or [main.py](./main/main.py) script to either just contoll the car or also see the detection in the local netwerk via localhost:5000/.
+Now you can use the [run_car.py](./main/run_car.py) or [main.py](./main/main.py) script to either just controll the car or also see the detection in the local network via localhost:5000/.
 
 
 ## Built With
