@@ -15,7 +15,7 @@ This will install all needed libaries, that can be found in [dependencies.txt](d
 
 Therefore you need to connect the camera to the pi and change the wiring harness of the car as shown below:
 
-<img src="doku/Schaltplan.jpg" alt="drawing" width="400"/>
+<img src="documentation/Schaltplan.jpg" alt="drawing" width="400"/>
 
 
 ### Step 3 - Run the car
